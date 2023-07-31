@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { Routes } from 'react-router-dom';
+import {
+  useFirebaseApp,
+  FirestoreProvider,
+  AuthProvider,
+  FunctionsProvider,
+} from 'reactfire';
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const app = useFirebaseApp();
+  const firestoreInstance = getFirestore(app);
+  const storageInstance = getStorage(app);
+  const authInstance = getAuth(app);
+  const functionsInstance = getFunctions(app);
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    // Set up emulators
+    connectStorageEmulator(storageInstance, '127.0.0.1', 9199);
+    connectAuthEmulator(authInstance, 'http://127.0.0.1:9099', {
+      disableWarnings: true,
+    });
+    connectFirestoreEmulator(firestoreInstance, '127.0.0.1', 8080);
+    connectFunctionsEmulator(functionsInstance, '127.0.0.1', 5001);
+  }
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <FirestoreProvider sdk={firestoreInstance}>
+      <AuthProvider sdk={authInstance}>
+        <FunctionsProvider sdk={functionsInstance}>
+          <Routes>
+            {/*<Route path="/" element={<Header/>}>*/}
+            {/*  <Route index element={<Home/>}/>*/}
+            {/*  <Route path="/restaurant/:id" element={<Restaurant/>}/>*/}
+            {/*</Route>*/}
+          </Routes>
+        </FunctionsProvider>
+      </AuthProvider>
+    </FirestoreProvider>
+  );
 }
 
-export default App
+export default App;
