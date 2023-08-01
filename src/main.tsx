@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { FirebaseAppProvider } from 'reactfire';
 import { BrowserRouter } from 'react-router-dom';
-import { firebaseConfig } from './firebase-config.tsx';
+import { firebaseConfig } from './firebase-config.ts';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(

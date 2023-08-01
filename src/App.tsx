@@ -2,13 +2,14 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
-import { Routes } from 'react-router-dom';
 import {
   useFirebaseApp,
   FirestoreProvider,
   AuthProvider,
   FunctionsProvider,
 } from 'reactfire';
+import { AppRoutes } from './routes/Routes.tsx';
+import { GlobalStyles } from './globalStyles.ts';
 
 function App() {
   const app = useFirebaseApp();
@@ -16,7 +17,8 @@ function App() {
   const storageInstance = getStorage(app);
   const authInstance = getAuth(app);
   const functionsInstance = getFunctions(app);
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+
+  if (import.meta.env.DEV) {
     // Set up emulators
     connectStorageEmulator(storageInstance, '127.0.0.1', 9199);
     connectAuthEmulator(authInstance, 'http://127.0.0.1:9099', {
@@ -29,12 +31,8 @@ function App() {
     <FirestoreProvider sdk={firestoreInstance}>
       <AuthProvider sdk={authInstance}>
         <FunctionsProvider sdk={functionsInstance}>
-          <Routes>
-            {/*<Route path="/" element={<Header/>}>*/}
-            {/*  <Route index element={<Home/>}/>*/}
-            {/*  <Route path="/restaurant/:id" element={<Restaurant/>}/>*/}
-            {/*</Route>*/}
-          </Routes>
+          <GlobalStyles/>
+          <AppRoutes />
         </FunctionsProvider>
       </AuthProvider>
     </FirestoreProvider>
