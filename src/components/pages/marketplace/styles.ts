@@ -4,7 +4,7 @@ export const StyledMarketplace = styled.div`
   // Display
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   
   // Spacing

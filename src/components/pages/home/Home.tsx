@@ -13,12 +13,11 @@ import {
   LoginButtonWrapper,
 } from './styles';
 import { useSigninCheck } from 'reactfire';
-// import { useAuth } from '../../../context/AuthContext';
+import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 
 export const Home = () => {
   const navigate = useNavigate();
   const { status, data: signInCheckResult } = useSigninCheck();
-  // const { user, isFetching } = useAuth();
 
   const onRegistrationButtonClick = () => {
     navigate('/register');
@@ -37,8 +36,8 @@ export const Home = () => {
       <LoginButtonWrapper>
         {
           !signInCheckResult?.signedIn
-          ? <HeroButton disabled={status === 'loading'} onClick={onLoginButtonClick}>LOGIN</HeroButton>
-          : <HeroButton disabled={status === 'loading'} onClick={onResumeButtonClick}>CONTINUE</HeroButton>
+          ? <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING} onClick={onLoginButtonClick}>LOGIN</HeroButton>
+          : <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING} onClick={onResumeButtonClick}>CONTINUE</HeroButton>
         }
       </LoginButtonWrapper>
       <HeroContainer>

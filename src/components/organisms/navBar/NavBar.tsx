@@ -20,12 +20,8 @@ import { IoMdRibbon } from 'react-icons/io';
 import useCrew from '../../../stores/useCrew';
 import useShips from '../../../stores/useShips';
 import { useAuth, useFirestoreDocData, useUser } from 'reactfire';
-// import { useAuth } from '../../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
-// import usePlayer from '../../../stores/usePlayer';
-// import { httpsCallable } from 'firebase/functions';
-// import { functions } from '../../../firebase';
 import { signOut } from 'firebase/auth';
 import { doc } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
@@ -62,18 +58,6 @@ export const NavBar = () => {
       navigate(route);
     }
   };
-
-  // const testFunction = async () => {
-  //   console.log('test function starting');
-  //   const stuff = await httpsCallable(functions, 'createMarketplaceShips')();
-  //   console.log(stuff);
-  // };
-  //
-  // const testFunctionHello = async () => {
-  //   console.log('test function hello starting');
-  //   const stuff = await httpsCallable(functions, 'helloWorldCall')();
-  //   console.log(stuff);
-  // };
 
   const { crew } = useCrew();
   const { ships } = useShips();

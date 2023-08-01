@@ -1,9 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { FormEvent, useState } from 'react';
 import { useAuth } from 'reactfire';
-// import { useAuth } from '../../../context/AuthContext';
 import { AuthContainer } from './styles';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+
+// TODO: Collapse Login and Register into one component
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,6 @@ export const Login = () => {
   const [, setError] = useState('');
 
   const auth = useAuth();
-  // const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {

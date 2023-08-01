@@ -1,4 +1,3 @@
-// import { AuthContextProvider } from '../context/AuthContext';
 import { Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Home } from '../components/pages/home/Home';
@@ -45,29 +44,27 @@ const protectedRoutesMap = {
 export const AppRoutes = () => {
   return (
     <>
-      {/*<AuthContextProvider>*/}
-        <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/login" element={<Login/>}/>
-          {
-            Object.entries(PROTECTED_ROUTES).map(([route, path]) => {
-              const componentKey = PROTECTED_ROUTES[route as keyof typeof PROTECTED_ROUTES];
-              const Component = protectedRoutesMap[componentKey];
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/register" element={<Register/>}/>
+        <Route path="/login" element={<Login/>}/>
+        {
+          Object.entries(PROTECTED_ROUTES).map(([route, path]) => {
+            const componentKey = PROTECTED_ROUTES[route as keyof typeof PROTECTED_ROUTES];
+            const Component = protectedRoutesMap[componentKey];
 
-              return (
-                <Route key={route} path={path} element={
-                  <ProtectedRoute>
-                    <PrimaryLayout>
-                      <Component/>
-                    </PrimaryLayout>
-                  </ProtectedRoute>
-                }/>
-              );
-            })
-          }
-        </Routes>
-      {/*</AuthContextProvider>*/}
+            return (
+              <Route key={route} path={path} element={
+                <ProtectedRoute>
+                  <PrimaryLayout>
+                    <Component/>
+                  </PrimaryLayout>
+                </ProtectedRoute>
+              }/>
+            );
+          })
+        }
+      </Routes>
     </>
   );
 };
