@@ -28,8 +28,6 @@ function App() {
     connectFunctionsEmulator(functionsInstance, '127.0.0.1', 5001);
   }
 
-  console.log('import.meta.env ', import.meta.env);
-
   return (
     <FirestoreProvider sdk={firestoreInstance}>
       <AuthProvider sdk={authInstance}>
