@@ -12,12 +12,16 @@ import {
   TextUnskewWrapper, SecondaryStatGridContainer,
 } from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileLines, faPeopleGroup, faRocket } from '@fortawesome/free-solid-svg-icons';
-import { GiOrbital, GiTrophy } from 'react-icons/gi';
-import { BsStars } from 'react-icons/bs';
+import {
+  // faFileLines,
+  // faPeopleGroup,
+  faRocket
+} from '@fortawesome/free-solid-svg-icons';
+// import { GiOrbital, GiTrophy } from 'react-icons/gi';
+// import { BsStars } from 'react-icons/bs';
 import { TbWorldDollar } from 'react-icons/tb';
-import { IoMdRibbon } from 'react-icons/io';
-import useCrew from '../../../stores/useCrew';
+// import { IoMdRibbon } from 'react-icons/io';
+// import useCrew from '../../../stores/useCrew';
 import useShips from '../../../stores/useShips';
 import { useAuth, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -59,58 +63,58 @@ export const NavBar = () => {
     }
   };
 
-  const { crew } = useCrew();
+  // const { crew } = useCrew();
   const { ships } = useShips();
 
   const navButtonMap = {
-    [NAV_BUTTON.OUTPOST]: {
-      icon: <GiOrbital style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.OUTPOST,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.GALAXY]: {
-      icon: <BsStars style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.GALAXY,
-      hasCount: false,
-      count: null,
-    },
+    // [NAV_BUTTON.OUTPOST]: {
+    //   icon: <GiOrbital style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.OUTPOST,
+    //   hasCount: false,
+    //   count: null,
+    // },
+    // [NAV_BUTTON.GALAXY]: {
+    //   icon: <BsStars style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.GALAXY,
+    //   hasCount: false,
+    //   count: null,
+    // },
     [NAV_BUTTON.SHIPS]: {
       icon: <FontAwesomeIcon icon={faRocket}/>,
       route: PROTECTED_ROUTES.SHIPYARD,
       hasCount: true,
       count: ships.length,
     },
-    [NAV_BUTTON.CREW]: {
-      icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
-      route: PROTECTED_ROUTES.CREW,
-      hasCount: true,
-      count: crew.length,
-    },
-    [NAV_BUTTON.CONTRACTS]: {
-      icon: <FontAwesomeIcon icon={faFileLines}/>,
-      route: PROTECTED_ROUTES.CONTRACTS,
-      hasCount: true,
-      count: 0,
-    },
+    // [NAV_BUTTON.CREW]: {
+    //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
+    //   route: PROTECTED_ROUTES.CREW,
+    //   hasCount: true,
+    //   count: crew.length,
+    // },
+    // [NAV_BUTTON.CONTRACTS]: {
+    //   icon: <FontAwesomeIcon icon={faFileLines}/>,
+    //   route: PROTECTED_ROUTES.CONTRACTS,
+    //   hasCount: true,
+    //   count: 0,
+    // },
     [NAV_BUTTON.MARKET]: {
       icon: <TbWorldDollar style={{ fontSize: '22px' }}/>,
       route: PROTECTED_ROUTES.MARKETPLACE,
       hasCount: false,
       count: null,
     },
-    [NAV_BUTTON.RANKS]: {
-      icon: <GiTrophy style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.RANKS,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.QUESTS]: {
-      icon: <IoMdRibbon style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.QUESTS,
-      hasCount: true,
-      count: 0,
-    }
+    // [NAV_BUTTON.RANKS]: {
+    //   icon: <GiTrophy style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.RANKS,
+    //   hasCount: false,
+    //   count: null,
+    // },
+    // [NAV_BUTTON.QUESTS]: {
+    //   icon: <IoMdRibbon style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.QUESTS,
+    //   hasCount: true,
+    //   count: 0,
+    // }
   };
 
   const formatter = new Intl.NumberFormat('en-US', {
