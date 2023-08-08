@@ -36,17 +36,25 @@ export const TileContainer = styled.div`
   align-items: center;
 `;
 
-export const Tile = styled.div`
+export const Tile = styled.button`
   // Display
   display: flex;
+  flex-direction: column;
   height: 100px;
   width: 100px;
   background-color: #2f6fad;
+  color: white;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+  cursor: pointer;
   
   &:hover {
     background-color: #4ca7ff;
+  }
+  
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
   }
 `;

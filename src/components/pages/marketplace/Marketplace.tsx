@@ -2,21 +2,27 @@ import {
   MarketplaceSectionContainer,
   StyledMarketplace, Tile, TileContainer
 } from './styles';
-import { useFunctions } from 'reactfire';
+import { useFirestore, useFirestoreCollectionData, useFirestoreDocData, useFunctions, useUser } from 'reactfire';
+import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { useEffect } from 'react';
+import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 
 export const Marketplace = () => {
   const functions = useFunctions();
-  const checkForNewMarketplaceShips = httpsCallable(functions, 'checkForNewMarketplaceShips');
+  const firestore = useFirestore();
+  const purchaseShip = httpsCallable(functions, 'purchaseShip');
 
-  useEffect(() => {
-    (async () => {
-      const result = await checkForNewMarketplaceShips({ message: 'When can I see new ships, yo?' });
-      console.log('result', result.data);
-      return result;
-    })();
-  }, []);
+  const handlePurchaseShip = async (shipClass: string) => {
+    return purchaseShip({ shipClass });
+  };
+
+  const { data: user } = useUser();
+  const userRef = doc(firestore, `players/${user?.uid}`);
+  const { data: userData } = useFirestoreDocData(userRef);
+
+  const shipClassesCollection = collection(firestore, 'shipBlueprints');
+  const shipClassesQuery = query(shipClassesCollection, orderBy('price', 'asc'));
+  const { status, data: shipClasses } = useFirestoreCollectionData(shipClassesQuery);
 
   return (
     <StyledMarketplace>
@@ -24,14 +30,20 @@ export const Marketplace = () => {
       <MarketplaceSectionContainer>
         <h3>SHIPS</h3>
         <TileContainer>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
-          <Tile>Ship</Tile>
+          {
+            status !== REACT_FIRE_HOOK_STATUS.LOADING && shipClasses.map((shipClass) => {
+              return (
+                <Tile
+                  key={shipClass.class}
+                  onClick={() => handlePurchaseShip(shipClass.class)}
+                  disabled={userData?.balance < shipClass.price}
+                >
+                  <p>{shipClass.class}</p>
+                  <h3>$ {shipClass.price}</h3>
+                </Tile>
+              );
+            })
+          }
         </TileContainer>
       </MarketplaceSectionContainer>
       <MarketplaceSectionContainer>
@@ -41,5 +53,6 @@ export const Marketplace = () => {
         <h3>TALENT POOL COMING SOON...</h3>
       </MarketplaceSectionContainer>
     </StyledMarketplace>
-  );
+  )
+    ;
 };

@@ -3,7 +3,7 @@ const { Timestamp } = require( 'firebase-admin/firestore');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-const {checkForNewMarketplaceShips} = require('./ships');
+const {purchaseShip} = require('./ships');
 
 exports.createPlayer = functions.auth.user().onCreate((user) => {
   const timestamp = Timestamp.now();
@@ -17,4 +17,4 @@ exports.createPlayer = functions.auth.user().onCreate((user) => {
   });
 });
 
-exports.checkForNewMarketplaceShips = checkForNewMarketplaceShips;
+exports.purchaseShip = purchaseShip;

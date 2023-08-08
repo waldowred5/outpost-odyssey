@@ -22,13 +22,15 @@ import {
 import { TbWorldDollar } from 'react-icons/tb';
 // import { IoMdRibbon } from 'react-icons/io';
 // import useCrew from '../../../stores/useCrew';
-import useShips from '../../../stores/useShips';
-import { useAuth, useFirestoreDocData, useUser } from 'reactfire';
+// import useShips from '../../../stores/useShips';
+import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
 import { signOut } from 'firebase/auth';
-import { doc } from 'firebase/firestore';
+import { collection, doc, orderBy, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
+import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { useEffect } from 'react';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -64,7 +66,36 @@ export const NavBar = () => {
   };
 
   // const { crew } = useCrew();
-  const { ships } = useShips();
+  // const { ships } = useShips();
+
+  const firestore = useFirestore();
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
+
+  const playerRef = doc(firestore, 'players', `${user?.uid}`);
+  const { status: playerStatus, data: playerData } = useFirestoreDocData(playerRef);
+  const balance = playerData?.balance || '-';
+  const balanceModifier = balance < 0 ? '-' : '';
+  const balanceAmount = balance < 0 ? formatter.format(balance * -1) : formatter.format(balance);
+  const balanceString = balance === '-' ? '-' : `${balanceModifier} ${balanceAmount}`;
+
+  const playerShipsCollection = collection(firestore, `players/${user?.uid}/ships`);
+  const playerShipsQuery = query(playerShipsCollection);
+  const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
+    idField: 'id', // this field will be added to the object created from each document
+  });
+
+  useEffect(() => {
+    console.log(shipStatus);
+    console.log(shipData);
+    console.log(user?.uid);
+    console.log(playerShipsCollection);
+    console.log(playerData);
+  }, [shipStatus, shipData, user, playerData]);
 
   const navButtonMap = {
     // [NAV_BUTTON.OUTPOST]: {
@@ -83,7 +114,7 @@ export const NavBar = () => {
       icon: <FontAwesomeIcon icon={faRocket}/>,
       route: PROTECTED_ROUTES.SHIPYARD,
       hasCount: true,
-      count: ships.length,
+      count: shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? shipData.length : 0,
     },
     // [NAV_BUTTON.CREW]: {
     //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
@@ -116,19 +147,6 @@ export const NavBar = () => {
     //   count: 0,
     // }
   };
-
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  });
-
-  const balanceRef = doc(useFirestore(), 'players', `${user?.uid}`);
-  const { data: balanceData } = useFirestoreDocData(balanceRef);
-  const balance = balanceData?.balance || '-';
-  const balanceModifier = balance < 0 ? '-' : '';
-  const balanceAmount = balance < 0 ? formatter.format(balance * -1) : formatter.format(balance);
-  const balanceString = balance === '-' ? '-' : `${balanceModifier} ${balanceAmount}`;
 
   return (
     <>
