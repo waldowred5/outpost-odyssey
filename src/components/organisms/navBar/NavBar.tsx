@@ -27,10 +27,9 @@ import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } fro
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
 import { signOut } from 'firebase/auth';
-import { collection, doc, orderBy, query } from 'firebase/firestore';
+import { collection, doc, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
-import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
-import { useEffect } from 'react';
+import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -65,9 +64,6 @@ export const NavBar = () => {
     }
   };
 
-  // const { crew } = useCrew();
-  // const { ships } = useShips();
-
   const firestore = useFirestore();
 
   const formatter = new Intl.NumberFormat('en-US', {
@@ -76,26 +72,18 @@ export const NavBar = () => {
     maximumFractionDigits: 0,
   });
 
-  const playerRef = doc(firestore, 'players', `${user?.uid}`);
-  const { status: playerStatus, data: playerData } = useFirestoreDocData(playerRef);
+  const playerRef = doc(firestore, FIRESTORE_COLLECTION.PLAYERS, `${user?.uid}`);
+  const { data: playerData } = useFirestoreDocData(playerRef);
   const balance = playerData?.balance || '-';
   const balanceModifier = balance < 0 ? '-' : '';
   const balanceAmount = balance < 0 ? formatter.format(balance * -1) : formatter.format(balance);
   const balanceString = balance === '-' ? '-' : `${balanceModifier} ${balanceAmount}`;
 
-  const playerShipsCollection = collection(firestore, `players/${user?.uid}/ships`);
+  const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
   const playerShipsQuery = query(playerShipsCollection);
   const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
     idField: 'id', // this field will be added to the object created from each document
   });
-
-  useEffect(() => {
-    console.log(shipStatus);
-    console.log(shipData);
-    console.log(user?.uid);
-    console.log(playerShipsCollection);
-    console.log(playerData);
-  }, [shipStatus, shipData, user, playerData]);
 
   const navButtonMap = {
     // [NAV_BUTTON.OUTPOST]: {
@@ -120,7 +108,7 @@ export const NavBar = () => {
     //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
     //   route: PROTECTED_ROUTES.CREW,
     //   hasCount: true,
-    //   count: crew.length,
+    //   count: 0,
     // },
     // [NAV_BUTTON.CONTRACTS]: {
     //   icon: <FontAwesomeIcon icon={faFileLines}/>,

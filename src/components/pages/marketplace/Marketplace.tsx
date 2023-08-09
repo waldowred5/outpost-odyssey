@@ -5,22 +5,23 @@ import {
 import { useFirestore, useFirestoreCollectionData, useFirestoreDocData, useFunctions, useUser } from 'reactfire';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { CLOUD_FUNCTION, FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { FaRocket } from 'react-icons/fa';
 
 export const Marketplace = () => {
   const functions = useFunctions();
   const firestore = useFirestore();
-  const purchaseShip = httpsCallable(functions, 'purchaseShip');
+  const purchaseShip = httpsCallable(functions, CLOUD_FUNCTION.PURCHASE_SHIP);
 
   const handlePurchaseShip = async (shipClass: string) => {
     return purchaseShip({ shipClass });
   };
 
   const { data: user } = useUser();
-  const userRef = doc(firestore, `players/${user?.uid}`);
+  const userRef = doc(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}`);
   const { data: userData } = useFirestoreDocData(userRef);
 
-  const shipClassesCollection = collection(firestore, 'shipBlueprints');
+  const shipClassesCollection = collection(firestore, FIRESTORE_COLLECTION.SHIP_CLASSES);
   const shipClassesQuery = query(shipClassesCollection, orderBy('price', 'asc'));
   const { status, data: shipClasses } = useFirestoreCollectionData(shipClassesQuery);
 
@@ -34,11 +35,12 @@ export const Marketplace = () => {
             status !== REACT_FIRE_HOOK_STATUS.LOADING && shipClasses.map((shipClass) => {
               return (
                 <Tile
-                  key={shipClass.class}
-                  onClick={() => handlePurchaseShip(shipClass.class)}
+                  key={shipClass.shipClass}
+                  onClick={() => handlePurchaseShip(shipClass.shipClass)}
                   disabled={userData?.balance < shipClass.price}
                 >
-                  <p>{shipClass.class}</p>
+                  <FaRocket style={{ fontSize: '32px' }}/>
+                  <p>{shipClass.shipClass}</p>
                   <h3>$ {shipClass.price}</h3>
                 </Tile>
               );

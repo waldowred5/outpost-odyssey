@@ -34,27 +34,34 @@ export const TileContainer = styled.div`
   column-gap: 12px;
   justify-content: center;
   align-items: center;
+  height: 140px;
+  width: 80vw;
 `;
 
 export const Tile = styled.button`
   // Display
   display: flex;
   flex-direction: column;
-  height: 100px;
-  width: 100px;
-  background-color: #2f6fad;
-  color: white;
+  flex: 1 1;
+  row-gap: 8px;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border: 8px #2f6fad solid;
+  color: cyan;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
   cursor: pointer;
   
-  &:hover {
-    background-color: #4ca7ff;
+  &:hover:enabled {
+    border: 8px cyan solid;
+    color: white;
   }
   
   &:disabled {
-    background-color: grey;
+    border: 8px grey solid;
+    color: grey;
     cursor: not-allowed;
   }
 `;
