@@ -12,19 +12,24 @@ import {
   TextUnskewWrapper, SecondaryStatGridContainer,
 } from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileLines, faPeopleGroup, faRocket } from '@fortawesome/free-solid-svg-icons';
-import { GiOrbital, GiTrophy } from 'react-icons/gi';
-import { BsStars } from 'react-icons/bs';
+import {
+  // faFileLines,
+  // faPeopleGroup,
+  faRocket
+} from '@fortawesome/free-solid-svg-icons';
+// import { GiOrbital, GiTrophy } from 'react-icons/gi';
+// import { BsStars } from 'react-icons/bs';
 import { TbWorldDollar } from 'react-icons/tb';
-import { IoMdRibbon } from 'react-icons/io';
-import useCrew from '../../../stores/useCrew';
-import useShips from '../../../stores/useShips';
-import { useAuth, useFirestoreDocData, useUser } from 'reactfire';
+// import { IoMdRibbon } from 'react-icons/io';
+// import useCrew from '../../../stores/useCrew';
+// import useShips from '../../../stores/useShips';
+import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
 import { signOut } from 'firebase/auth';
-import { doc } from 'firebase/firestore';
+import { collection, doc, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
+import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -59,59 +64,7 @@ export const NavBar = () => {
     }
   };
 
-  const { crew } = useCrew();
-  const { ships } = useShips();
-
-  const navButtonMap = {
-    [NAV_BUTTON.OUTPOST]: {
-      icon: <GiOrbital style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.OUTPOST,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.GALAXY]: {
-      icon: <BsStars style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.GALAXY,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.SHIPS]: {
-      icon: <FontAwesomeIcon icon={faRocket}/>,
-      route: PROTECTED_ROUTES.SHIPYARD,
-      hasCount: true,
-      count: ships.length,
-    },
-    [NAV_BUTTON.CREW]: {
-      icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
-      route: PROTECTED_ROUTES.CREW,
-      hasCount: true,
-      count: crew.length,
-    },
-    [NAV_BUTTON.CONTRACTS]: {
-      icon: <FontAwesomeIcon icon={faFileLines}/>,
-      route: PROTECTED_ROUTES.CONTRACTS,
-      hasCount: true,
-      count: 0,
-    },
-    [NAV_BUTTON.MARKET]: {
-      icon: <TbWorldDollar style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.MARKETPLACE,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.RANKS]: {
-      icon: <GiTrophy style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.RANKS,
-      hasCount: false,
-      count: null,
-    },
-    [NAV_BUTTON.QUESTS]: {
-      icon: <IoMdRibbon style={{ fontSize: '22px' }}/>,
-      route: PROTECTED_ROUTES.QUESTS,
-      hasCount: true,
-      count: 0,
-    }
-  };
+  const firestore = useFirestore();
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -119,12 +72,69 @@ export const NavBar = () => {
     maximumFractionDigits: 0,
   });
 
-  const balanceRef = doc(useFirestore(), 'players', `${user?.uid}`);
-  const { data: balanceData } = useFirestoreDocData(balanceRef);
-  const balance = balanceData?.balance || '-';
+  const playerRef = doc(firestore, FIRESTORE_COLLECTION.PLAYERS, `${user?.uid}`);
+  const { data: playerData } = useFirestoreDocData(playerRef);
+  const balance = playerData?.balance || '-';
   const balanceModifier = balance < 0 ? '-' : '';
   const balanceAmount = balance < 0 ? formatter.format(balance * -1) : formatter.format(balance);
   const balanceString = balance === '-' ? '-' : `${balanceModifier} ${balanceAmount}`;
+
+  const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
+  const playerShipsQuery = query(playerShipsCollection);
+  const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
+    idField: 'id', // this field will be added to the object created from each document
+  });
+
+  const navButtonMap = {
+    // [NAV_BUTTON.OUTPOST]: {
+    //   icon: <GiOrbital style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.OUTPOST,
+    //   hasCount: false,
+    //   count: null,
+    // },
+    // [NAV_BUTTON.GALAXY]: {
+    //   icon: <BsStars style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.GALAXY,
+    //   hasCount: false,
+    //   count: null,
+    // },
+    [NAV_BUTTON.SHIPS]: {
+      icon: <FontAwesomeIcon icon={faRocket}/>,
+      route: PROTECTED_ROUTES.SHIPYARD,
+      hasCount: true,
+      count: shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? shipData.length : 0,
+    },
+    // [NAV_BUTTON.CREW]: {
+    //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
+    //   route: PROTECTED_ROUTES.CREW,
+    //   hasCount: true,
+    //   count: 0,
+    // },
+    // [NAV_BUTTON.CONTRACTS]: {
+    //   icon: <FontAwesomeIcon icon={faFileLines}/>,
+    //   route: PROTECTED_ROUTES.CONTRACTS,
+    //   hasCount: true,
+    //   count: 0,
+    // },
+    [NAV_BUTTON.MARKET]: {
+      icon: <TbWorldDollar style={{ fontSize: '22px' }}/>,
+      route: PROTECTED_ROUTES.MARKETPLACE,
+      hasCount: false,
+      count: null,
+    },
+    // [NAV_BUTTON.RANKS]: {
+    //   icon: <GiTrophy style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.RANKS,
+    //   hasCount: false,
+    //   count: null,
+    // },
+    // [NAV_BUTTON.QUESTS]: {
+    //   icon: <IoMdRibbon style={{ fontSize: '22px' }}/>,
+    //   route: PROTECTED_ROUTES.QUESTS,
+    //   hasCount: true,
+    //   count: 0,
+    // }
+  };
 
   return (
     <>
