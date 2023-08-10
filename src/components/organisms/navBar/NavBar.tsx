@@ -11,18 +11,7 @@ import {
   TertiaryText,
   TextUnskewWrapper, SecondaryStatGridContainer,
 } from './styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  // faFileLines,
-  // faPeopleGroup,
-  faRocket
-} from '@fortawesome/free-solid-svg-icons';
-// import { GiOrbital, GiTrophy } from 'react-icons/gi';
-// import { BsStars } from 'react-icons/bs';
 import { TbWorldDollar } from 'react-icons/tb';
-// import { IoMdRibbon } from 'react-icons/io';
-// import useCrew from '../../../stores/useCrew';
-// import useShips from '../../../stores/useShips';
 import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
@@ -30,6 +19,7 @@ import { signOut } from 'firebase/auth';
 import { collection, doc, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { BsRocketTakeoffFill } from 'react-icons/bs';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -99,7 +89,7 @@ export const NavBar = () => {
     //   count: null,
     // },
     [NAV_BUTTON.SHIPS]: {
-      icon: <FontAwesomeIcon icon={faRocket}/>,
+      icon: <BsRocketTakeoffFill style={{ fontSize: '18px' }}/>,
       route: PROTECTED_ROUTES.SHIPYARD,
       hasCount: true,
       count: shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? shipData.length : 0,
