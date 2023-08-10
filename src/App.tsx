@@ -10,6 +10,7 @@ import {
 } from 'reactfire';
 import { AppRoutes } from './routes/Routes.tsx';
 import { GlobalStyles } from './globalStyles.ts';
+import { Timers } from './controllers/Timers.tsx';
 
 function App() {
   const app = useFirebaseApp();
@@ -33,6 +34,7 @@ function App() {
       <AuthProvider sdk={authInstance}>
         <FunctionsProvider sdk={functionsInstance}>
           <GlobalStyles/>
+          <Timers />
           <AppRoutes />
         </FunctionsProvider>
       </AuthProvider>

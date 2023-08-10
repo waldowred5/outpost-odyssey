@@ -4,10 +4,7 @@ import { https } from 'firebase-functions';
 import { db } from './db';
 import { FIRESTORE_COLLECTION } from '../../src/utils/constants';
 
-
 export const purchaseShip = onCall(async (request) => {
-  logger.log('Cool test message numero uno');
-
   if (request.auth === undefined) {
     logger.log('Unauthenticated request');
 
