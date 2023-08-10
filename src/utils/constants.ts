@@ -1,8 +1,8 @@
 export const CLOUD_FUNCTION = {
+  GET_SERVER_TIME: 'getServerTime',
   PURCHASE_SHIP: 'purchaseShip',
 };
 
-// TODO: Figure out how to avoid duplicating this in functions dir
 export const FIRESTORE_COLLECTION = {
   PLAYERS: 'players',
   SHIP_CLASSES: 'shipClasses',

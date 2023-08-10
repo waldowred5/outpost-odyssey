@@ -14,7 +14,7 @@ export const Marketplace = () => {
   const purchaseShip = httpsCallable(functions, CLOUD_FUNCTION.PURCHASE_SHIP);
 
   const handlePurchaseShip = async (shipClass: string) => {
-    return purchaseShip({ shipClass });
+    return await purchaseShip({ shipClass });
   };
 
   const { data: user } = useUser();
