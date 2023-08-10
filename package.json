@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "serve": "firebase emulators:start --import=./.seedLocal --export-on-exit",
-    "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal"
+    "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal",
+    "seed:export": "firebase emulators:export ./.seed"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

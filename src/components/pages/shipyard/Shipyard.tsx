@@ -1,9 +1,9 @@
 import { StyledShipyard } from './styles';
 import { ShipyardSectionContainer, Tile, TileContainer } from './styles.ts';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
-import { FaRocket } from 'react-icons/fa';
 import { useFirestore, useFirestoreCollectionData, useUser } from 'reactfire';
 import { collection, orderBy, query } from 'firebase/firestore';
+import { BsRocketTakeoffFill } from 'react-icons/bs';
 
 export const Shipyard = () => {
   const firestore = useFirestore();
@@ -27,7 +27,7 @@ export const Shipyard = () => {
                   key={shipDataItem.id}
                   onClick={() => console.log(`ship ${shipDataItem.id} selected`, shipDataItem)}
                 >
-                  <FaRocket style={{ fontSize: '32px' }}/>
+                  <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
                   <p>{shipDataItem.shipClass}</p>
                   <h3>{shipDataItem.id.substring(0, 4)}</h3>
                 </Tile>
