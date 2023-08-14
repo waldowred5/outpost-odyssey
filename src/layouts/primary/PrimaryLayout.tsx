@@ -1,6 +1,7 @@
 import { StyledPrimaryLayout } from './styles';
 import { ReactNode } from 'react';
 import { NavBar } from '../../components/organisms/navBar/NavBar';
+import { EventQueue } from '../../components/organisms/eventQueue/EventQueue.tsx';
 
 interface PrimaryLayoutProps {
   children?: ReactNode;
@@ -11,6 +12,7 @@ export const PrimaryLayout = ({ children }: PrimaryLayoutProps) => {
     <>
       <StyledPrimaryLayout>
         <NavBar/>
+        <EventQueue/>
         { children }
       </StyledPrimaryLayout>
     </>

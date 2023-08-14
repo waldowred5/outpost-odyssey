@@ -21,14 +21,18 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/material": "^5.14.2",
+    "@react-three/fiber": "^8.13.6",
+    "@types/fbemitter": "^2.0.32",
     "@types/styled-components": "^5.1.26",
     "eslint-plugin-react": "^7.33.1",
+    "fbemitter": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-router-dom": "^6.14.2",
     "repo-visualizer": "^0.0.3",
     "styled-components": "^6.0.5",
+    "three": "^0.155.0",
     "zustand": "^4.3.9"
   },
   "devDependencies": {

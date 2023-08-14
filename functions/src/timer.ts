@@ -11,10 +11,8 @@ export const getServerTime = onCall(async (request) => {
   }
 
   try {
-    const serverTime = Timestamp.now();
-
     return {
-      serverTime,
+      serverTime: Timestamp.now(),
     };
   } catch (e) {
     logger.error('Error getting server timestamp', e);

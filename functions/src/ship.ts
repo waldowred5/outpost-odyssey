@@ -3,6 +3,7 @@ import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
 import { db } from './db';
 import { FIRESTORE_COLLECTION } from '../../src/utils/constants';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export const purchaseShip = onCall(async (request) => {
   if (request.auth === undefined) {
@@ -24,7 +25,19 @@ export const purchaseShip = onCall(async (request) => {
     const user = userSnap.data();
 
     const shipSnap = await shipRef.get();
-    const ship = shipSnap.data();
+    const shipData = shipSnap.data();
+
+    const purchasedAt = Timestamp.now();
+    const availableAfter = new Timestamp(
+      purchasedAt.seconds + 10,
+      purchasedAt.nanoseconds
+    );
+
+    const ship = {
+      ...shipData,
+      purchasedAt,
+      availableAfter,
+    };
 
     if (user === undefined || ship === undefined) {
       logger.log('User or ship not found');
@@ -38,16 +51,14 @@ export const purchaseShip = onCall(async (request) => {
       return;
     }
 
-    await Promise.all([
-      userRef.update({
-        balance: user.balance - ship.price,
-      }),
-      userRef.collection('ships').add(ship),
-    ]);
+    await userRef.update({ balance: user.balance - ship.price });
+    const shipInstanceRef = await userRef.collection('ships').add(ship);
 
     return {
       uid,
-      message: `Purchased ${ship.name} for ${ship.price} credits`,
+      message: `Purchased ${shipInstanceRef.id} for ${ship.price} credits`,
+      shipId: shipInstanceRef.id,
+      availableAfter,
     };
   } catch (e) {
     logger.error('Error purchasing ship', e);
