@@ -4,6 +4,9 @@ Outpost Odyssey: A real-time strategy game where you manage an outpost
 
 Hosted [here](https://outpost-odyssey-web.web.app/) on Firebase
 
+### Repo Structure
+![Visualization of this repo](./diagram.svg)
+
 ## Tips and Tricks
 
 To run emulators, simply run:
