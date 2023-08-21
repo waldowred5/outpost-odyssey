@@ -11,6 +11,7 @@ import { emitter } from '../utils/emitter.ts';
 export const Timers = () => {
   const functions = useFunctions();
   const getServerTime = httpsCallable<void, Timestamp>(functions, CLOUD_FUNCTION.GET_SERVER_TIME);
+  const refreshTalentPool = httpsCallable<void, Timestamp>(functions, CLOUD_FUNCTION.REFRESH_TALENT_POOL);
   const {
     serverStartTime,
     initializeServerTimestampState,
@@ -32,6 +33,7 @@ export const Timers = () => {
 
   useEffect(() => {
     const triggerGetServerTime = async () => {
+      await refreshTalentPool(); // haha!
       const serverTimeEstablishedRequest = await getServerTime();
       const serverTimeEstablished = serverTimeEstablishedRequest.data;
       const serverTimeOffsetSeconds = serverTimeEstablished.serverTime._seconds - performance.timeOrigin / 1000;

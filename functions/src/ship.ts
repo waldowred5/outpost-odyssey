@@ -33,7 +33,7 @@ export const purchaseShip = onCall(async (request) => {
       purchasedAt.nanoseconds
     );
 
-    const ship = {
+    const ship: any = {
       ...shipData,
       purchasedAt,
       availableAfter,

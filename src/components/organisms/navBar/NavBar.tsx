@@ -12,6 +12,7 @@ import {
   TextUnskewWrapper, SecondaryStatGridContainer,
 } from './styles';
 import { TbWorldDollar } from 'react-icons/tb';
+import { FaPeopleCarry } from 'react-icons/fa';
 import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../routes/Routes';
@@ -20,6 +21,7 @@ import { collection, doc, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 import { BsRocketTakeoffFill } from 'react-icons/bs';
+import React from 'react';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -75,6 +77,12 @@ export const NavBar = () => {
     idField: 'id', // this field will be added to the object created from each document
   });
 
+  const playerCrewCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/crew`);
+  const playerCrewQuery = query(playerCrewCollection);
+  const { status: crewStatus, data: crewData } = useFirestoreCollectionData(playerCrewQuery, {
+    idField: 'id', // this field will be added to the object created from each document
+  });
+
   const navButtonMap = {
     // [NAV_BUTTON.OUTPOST]: {
     //   icon: <GiOrbital style={{ fontSize: '22px' }}/>,
@@ -94,12 +102,12 @@ export const NavBar = () => {
       hasCount: true,
       count: shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? shipData.length : 0,
     },
-    // [NAV_BUTTON.CREW]: {
-    //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
-    //   route: PROTECTED_ROUTES.CREW,
-    //   hasCount: true,
-    //   count: 0,
-    // },
+    [NAV_BUTTON.CREW]: {
+      icon: <FaPeopleCarry style={{ fontSize: '22px' }}/>,
+      route: PROTECTED_ROUTES.CREW,
+      hasCount: true,
+      count: crewStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? crewData.length : 0,
+    },
     // [NAV_BUTTON.CONTRACTS]: {
     //   icon: <FontAwesomeIcon icon={faFileLines}/>,
     //   route: PROTECTED_ROUTES.CONTRACTS,
