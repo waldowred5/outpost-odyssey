@@ -1,10 +1,9 @@
 import { BsRocketTakeoffFill } from 'react-icons/bs';
 import { Tile } from './styles.ts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useTimer from '../../../stores/useTimer.ts';
-import useEvent from '../../../stores/useEvent.ts';
-import { shallow } from 'zustand/shallow';
-// import { addEffect } from '@react-three/fiber';
+import { useFunctions, useUser } from 'reactfire';
+import { httpsCallable } from 'firebase/functions';
 
 export const ShipTile = ({ shipDataItem }) => {
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
@@ -25,107 +24,79 @@ export const ShipTile = ({ shipDataItem }) => {
     }
   ), []);
 
-  // useEffect(() => {
-  //   const unsubscribeEffect = addEffect(() => {
-  //     const { currentServerTime } = useTimer.getState();
-  //
-  //     // console.log('currentServerTime', currentServerTime);
-  //     // console.log('shipDataItem.availableAfter', shipDataItem.availableAfter);
-  //     // const disabled = !!(currentServerTime?.seconds < shipDataItem.availableAfter.seconds);
-  //     // const timeLeftSeconds = Math.ceil(shipDataItem.availableAfter.toMillis() / 1000 - currentServerTime?.toMillis() / 1000);
-  //
-  //     if (shipTileHeadingRef.current) {
-  //       console.log(currentServerTime);
-  //       shipTileHeadingRef.current.textContent = currentServerTime.toMillis().toString();
-  //     }
-  //   });
-  //
-  //   return () => {
-  //     unsubscribeEffect();
-  //   };
-  // }, []);
-
-  const {
-    gameEvents,
-  } = useEvent((state) => {
-    return {
-      gameEvents: state.gameEvents,
-    };
-  }, shallow);
-
-  const [isDisabled, setIsDisabled] = useState(false);
-
   useEffect(() => {
-    const disabled = !!gameEvents[`${shipDataItem.availableAfter.seconds}:${shipDataItem.id}`];
-    setIsDisabled(disabled);
-  }, [gameEvents]);
+    const unsubscribeEffect = () => {
+      const { currentServerTime } = useTimer.getState();
+
+      // console.log('currentServerTime', currentServerTime);
+      // console.log('shipDataItem.availableAfter', shipDataItem.availableAfter);
+      // const disabled = !!(currentServerTime?.seconds < shipDataItem.availableAfter.seconds);
+      // const timeLeftSeconds = Math.ceil(shipDataItem.availableAfter.toMillis() / 1000 - currentServerTime?.toMillis() / 1000);
+
+      if (shipTileHeadingRef.current && currentServerTime) {
+        shipTileHeadingRef.current.textContent = currentServerTime.seconds.toString();
+      }
+    };
+
+    return () => {
+      unsubscribeEffect();
+    };
+  }, []);
+
+  // const {
+  //   gameEvents,
+  // } = useEvent((state) => {
+  //   return {
+  //     gameEvents: state.gameEvents,
+  //   };
+  // }, shallow);
+  //
+  // const [isDisabled, setIsDisabled] = useState(false);
+  //
+  // useEffect(() => {
+  //   const disabled = !!gameEvents[`${shipDataItem.availableAfter.seconds}:${shipDataItem.id}`];
+  //   setIsDisabled(disabled);
+  // }, [gameEvents]);
+
+  const functions = useFunctions();
+  const gameEventQueueCallback = httpsCallable(functions, 'gameEventQueueCallback');
+  const { data: user } = useUser();
+  const testClickHandler = async (shipId: string) => {
+    if (!user) {
+      console.log('no user');
+
+      return;
+    }
+
+    await gameEventQueueCallback({ docPath: `players/${user.uid}/ships/${shipId}` });
+  };
+
+  const disabled = !shipDataItem.isAvailable;
 
   return (
-    <Tile
-      key={shipDataItem.id}
-      ref={shipTileButtonRef}
-      onClick={() => console.log(`ship ${shipDataItem.id} selected`, shipDataItem)}
-      disabled={isDisabled}
-    >
-      <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
-      <p>{shipDataItem.shipClass}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', rowGap: '4px' }}>
+      <Tile
+        key={shipDataItem.id}
+        ref={shipTileButtonRef}
+        onClick={() => console.log(`ship ${shipDataItem.id} selected`, shipDataItem)}
+        disabled={disabled}
+      >
+        <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
+        <p>{shipDataItem.shipClass}</p>
+        {
+          disabled ?
+            <>
+              <h3>AVAILABLE IN</h3>
+              <h3
+                ref={shipTileHeadingRef}
+              >PENDING</h3>
+            </> :
+            <p>{shipDataItem.id.substring(0, 4)}</p>
+        }
+      </Tile>
       {
-        isDisabled ?
-          <>
-            <h3>AVAILABLE IN</h3>
-            <h3
-              ref={shipTileHeadingRef}
-            >PENDING</h3>
-          </> :
-          <p>{shipDataItem.id.substring(0, 4)}</p>
+        disabled && <button onClick={() => testClickHandler(shipDataItem.id)}>MAKE AVAILABLE</button>
       }
-    </Tile>
+    </div>
   );
 };
-
-// import { useEffect, useRef } from 'react';
-// import { TimeHeading, TimePanelWrapper } from './styles';
-// import { addEffect } from '@react-three/fiber';
-// import { MATCH_PHASE } from '@/store/match/types';
-// import useMatchState from '@/store/match/useMatchState';
-//
-// export const TimePanel = () => {
-//   const timeRef = useRef<HTMLHeadingElement | null>(null);
-//
-//   // Start Timer
-//   useEffect(() => {
-//     const unsubscribeEffect = addEffect(() => {
-//       const { matchPhase, matchStartTime, matchEndTime } = useMatchState.getState();
-//
-//       let elapsedTime = 0;
-//
-//       if (matchPhase === MATCH_PHASE.ACTIVE_MATCH) {
-//         elapsedTime = Date.now() - matchStartTime;
-//       } else if (matchPhase === MATCH_PHASE.POST_MATCH) {
-//         elapsedTime = matchEndTime - matchStartTime;
-//       }
-//
-//       elapsedTime /= 1000;
-//       elapsedTime = Number(elapsedTime.toFixed(2));
-//
-//       if (timeRef.current) {
-//         timeRef.current.textContent = elapsedTime.toString();
-//       }
-//     });
-//
-//     return () => {
-//       unsubscribeEffect();
-//     };
-//   }, []);
-//
-//   return (
-//     <TimePanelWrapper>
-//       <TimeHeading
-//         ref={timeRef}
-//       >
-//         0.00
-//       </TimeHeading>
-//     </TimePanelWrapper>
-//   );
-// };
-

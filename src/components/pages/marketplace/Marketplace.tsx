@@ -7,11 +7,11 @@ import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { CLOUD_FUNCTION, FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 import { BsRocketTakeoff } from 'react-icons/bs';
-import { shallow } from 'zustand/shallow';
-import useEvent from '../../../stores/useEvent.ts';
+// import { shallow } from 'zustand/shallow';
+// import useEvent from '../../../stores/useEvent.ts';
 // import { useTimer } from '../../../context/Timer.tsx';
 // import { useEffect } from 'react';
-import { emitter } from '../../../utils/emitter.ts';
+// import { emitter } from '../../../utils/emitter.ts';
 
 export const Marketplace = () => {
   // console.log('Marketplace');
@@ -23,37 +23,34 @@ export const Marketplace = () => {
   // const { serverStartTime, currentServerTime } = useTimer();
   // const { serverStartTime } = useTimer();
 
-  const {
-    addGameEvent,
-    removeGameEvent,
-  } = useEvent((state) => {
-    return {
-      addGameEvent: state.addGameEvent,
-      removeGameEvent: state.removeGameEvent,
-    };
-  }, shallow);
+  // const {
+  //   addGameEvent,
+  //   removeGameEvent,
+  // } = useEvent((state) => {
+  //   return {
+  //     addGameEvent: state.addGameEvent,
+  //     removeGameEvent: state.removeGameEvent,
+  //   };
+  // }, shallow);
 
   const handlePurchaseShip = async (shipClass: string) => {
-    const shipRef = await purchaseShip({ shipClass });
-    const ship = shipRef.data; // TODO: Type this
+    return await purchaseShip({ shipClass });
+    // const shipRef = await purchaseShip({ shipClass });
+    // const ship = shipRef.data; // TODO: Type this
 
-    console.log('shipRef: ', shipRef);
-    console.log('ship: ', ship);
+    // const gameEvent = {
+    //   availableAfter: ship.availableAfter,
+    //   entityId: ship.shipId,
+    //   eventType: 'PURCHASE_SHIP',
+    // };
 
-    const gameEvent = {
-      availableAfter: ship.availableAfter,
-      entityId: ship.shipId,
-      eventType: 'PURCHASE_SHIP',
-    };
+    // addGameEvent(gameEvent);
 
-    addGameEvent(gameEvent);
+    // emitter.once(`PURCHASE_SHIP:${ship.shipId}`, () => {
+    //   removeGameEvent(gameEvent);
+    // });
 
-    emitter.once(`PURCHASE_SHIP:${ship.shipId}`, () => {
-      removeGameEvent(gameEvent);
-    });
-    console.log('Emitter registered for ', `PURCHASE_SHIP:${ship.shipId}`);
-
-    return shipRef;
+    // return shipRef;
   };
 
   const { data: user } = useUser();

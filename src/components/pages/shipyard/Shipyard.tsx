@@ -1,14 +1,11 @@
+import { useEffect, useRef } from 'react';
 import { StyledShipyard } from './styles';
-import { ShipyardSectionContainer, Tile, TileContainer } from './styles.ts';
+import { ShipyardSectionContainer, TileContainer } from './styles.ts';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
 import { useFirestore, useFirestoreCollectionData, useUser } from 'reactfire';
 import { collection, orderBy, query } from 'firebase/firestore';
-import { BsRocketTakeoffFill } from 'react-icons/bs';
 import useTimer from '../../../stores/useTimer.ts';
-import React, { useEffect, useRef } from 'react';
 import { ShipTile } from '../../molecules/shipTile/ShipTile.tsx';
-import useEvent from '../../../stores/useEvent.ts';
-import { shallow } from 'zustand/esm/shallow';
 
 export const Shipyard = () => {
   const firestore = useFirestore();
@@ -37,8 +34,8 @@ export const Shipyard = () => {
             shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS && shipData.map((shipDataItem) => {
               // console.log('currentServerTime', currentServerTime);
               // console.log('shipDataItem.availableAfter', shipDataItem.availableAfter);
-              const disabled = !!(currentServerTime?.seconds < shipDataItem.availableAfter.seconds);
-              const timeLeftSeconds = Math.ceil(shipDataItem.availableAfter.seconds - currentServerTime?.seconds);
+              // const disabled = !!(currentServerTime?.seconds < shipDataItem.availableAfter.seconds);
+              // const timeLeftSeconds = Math.ceil(shipDataItem.availableAfter.seconds - currentServerTime?.seconds);
 
               return (
                 // <Tile

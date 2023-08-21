@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import useTimer from '../stores/useTimer.ts';
 import { Timestamp } from 'firebase/firestore';
 import { shallow } from 'zustand/shallow';
-import useEvent from '../stores/useEvent.ts';
-import { emitter } from '../utils/emitter.ts';
+// import useEvent from '../stores/useEvent.ts';
+// import { emitter } from '../utils/emitter.ts';
 
 export const Timers = () => {
   const functions = useFunctions();
@@ -22,13 +22,14 @@ export const Timers = () => {
       updateCurrentServerTime: state.updateCurrentServerTime,
     };
   }, shallow);
-  const {
-    gameEvents,
-  } = useEvent((state) => {
-    return {
-      gameEvents: state.gameEvents,
-    };
-  }, shallow);
+
+  // const {
+  //   gameEvents,
+  // } = useEvent((state) => {
+  //   return {
+  //     gameEvents: state.gameEvents,
+  //   };
+  // }, shallow);
 
   useEffect(() => {
     const triggerGetServerTime = async () => {
@@ -70,22 +71,23 @@ export const Timers = () => {
 
       updateCurrentServerTime(currentServerTime);
 
+      // PUT THIS IN AN onSchedule FUNCTION
       // check if there are any completed events that need removing from eventStore
-      if (Object.entries(gameEvents).length === 0) {
-        return;
-      }
-
-      const nextGameEvent = Object.entries(gameEvents)[0];
-      const nextGameEventAvailableAfter = nextGameEvent[1].availableAfter;
-
-      if (currentServerTime.seconds >= nextGameEventAvailableAfter._seconds) {
-        console.log('Remove ship event emitted for', `PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
-        emitter.emit(`PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
-      }
+      // if (Object.entries(gameEvents).length === 0) {
+      //   return;
+      // }
+      //
+      // const nextGameEvent = Object.entries(gameEvents)[0];
+      // const nextGameEventAvailableAfter = nextGameEvent[1].availableAfter;
+      //
+      // if (currentServerTime.seconds >= nextGameEventAvailableAfter._seconds) {
+      //   console.log('Remove ship event emitted for', `PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
+      //   emitter.emit(`PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
+      // }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [serverStartTime, gameEvents]);
+  }, [serverStartTime]);
 
   return <></>;
 };
