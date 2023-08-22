@@ -2,28 +2,15 @@ import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
 import { db } from './db';
-import { FIRESTORE_COLLECTION } from '../../src/utils/constants';
+import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 import { Timestamp } from 'firebase-admin/firestore';
 import { addTaskToCloudTaskQueue } from './eventQueue';
-
-type ShipBlueprint = {
-  price: number,
-  shipClass: string,
-}
-
-type Ship = {
-  availableAfter: Timestamp,
-  isAvailable: boolean,
-  price: number,
-  purchasedAt: Timestamp,
-  shipClass: string,
-}
+import { Ship, ShipBlueprint } from '../../src/types/models';
 
 // TODO: Fix bug where function runs for the duration of the delay
 export const purchaseShip = onCall(async (request) => {
   if (request.auth === undefined) {
     logger.log('Unauthenticated request');
-
     throw new https.HttpsError('unauthenticated', 'Unauthenticated request');
   }
 
@@ -74,13 +61,6 @@ export const purchaseShip = onCall(async (request) => {
       entityInstanceRef: shipInstanceRef,
       availableAfter,
     });
-
-    return {
-      uid,
-      message: `Purchased ${shipInstanceRef.id} for ${ship.price} credits`,
-      shipId: shipInstanceRef.id,
-      availableAfter,
-    };
   } catch (e) {
     logger.error('Error purchasing ship', e);
     throw new https.HttpsError('internal', 'Error purchasing ship');
@@ -110,4 +90,3 @@ export const gameEventQueueCallback = onCall(async (req) => {
     // res.status(500).send(error);
   }
 });
-// END SOLUTION

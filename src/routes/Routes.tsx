@@ -14,19 +14,7 @@ import { Contracts } from '../components/pages/contracts/Contracts';
 import { Marketplace } from '../components/pages/marketplace/Marketplace';
 import { Ranks } from '../components/pages/ranks/Ranks';
 import { Quests } from '../components/pages/quests/Quests';
-
-export const PROTECTED_ROUTES = {
-  DASHBOARD: '/dashboard',
-  FINANCES: '/finances',
-  OUTPOST: '/outpost',
-  GALAXY: '/galaxy',
-  SHIPYARD: '/shipyard',
-  CREW: '/crew',
-  CONTRACTS: '/contracts',
-  MARKETPLACE: '/marketplace',
-  RANKS: '/ranks',
-  QUESTS: '/quests',
-};
+import { PROTECTED_ROUTES } from '../types/constants.ts';
 
 const protectedRoutesMap = {
   [PROTECTED_ROUTES.DASHBOARD]: Dashboard,

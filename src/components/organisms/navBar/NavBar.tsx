@@ -14,11 +14,11 @@ import {
 import { TbWorldDollar } from 'react-icons/tb';
 import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { PROTECTED_ROUTES } from '../../../routes/Routes';
+import { PROTECTED_ROUTES } from '../../../types/constants.ts';
 import { signOut } from 'firebase/auth';
 import { collection, doc, query } from 'firebase/firestore';
 import { useFirestore } from 'reactfire';
-import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
 import { BsRocketTakeoffFill } from 'react-icons/bs';
 
 const NAV_BUTTON = {

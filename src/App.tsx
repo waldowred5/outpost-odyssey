@@ -11,7 +11,6 @@ import {
 import { AppRoutes } from './routes/Routes.tsx';
 import { GlobalStyles } from './globalStyles.ts';
 import { Timers } from './controllers/Timers.tsx';
-// import { TimerContextProvider } from './context/Timer.tsx';
 
 function App() {
   const app = useFirebaseApp();
@@ -34,11 +33,9 @@ function App() {
     <FirestoreProvider sdk={firestoreInstance}>
       <AuthProvider sdk={authInstance}>
         <FunctionsProvider sdk={functionsInstance}>
-          {/*<TimerContextProvider>*/}
             <GlobalStyles/>
             <Timers/>
             <AppRoutes/>
-          {/*</TimerContextProvider>*/}
         </FunctionsProvider>
       </AuthProvider>
     </FirestoreProvider>

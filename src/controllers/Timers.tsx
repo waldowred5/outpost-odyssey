@@ -1,12 +1,10 @@
 import { useFunctions } from 'reactfire';
 import { httpsCallable } from 'firebase/functions';
-import { CLOUD_FUNCTION } from '../utils/constants.ts';
+import { CLOUD_FUNCTION } from '../types/constants.ts';
 import { useEffect } from 'react';
 import useTimer from '../stores/useTimer.ts';
 import { Timestamp } from 'firebase/firestore';
 import { shallow } from 'zustand/shallow';
-// import useEvent from '../stores/useEvent.ts';
-// import { emitter } from '../utils/emitter.ts';
 
 export const Timers = () => {
   const functions = useFunctions();
@@ -23,26 +21,12 @@ export const Timers = () => {
     };
   }, shallow);
 
-  // const {
-  //   gameEvents,
-  // } = useEvent((state) => {
-  //   return {
-  //     gameEvents: state.gameEvents,
-  //   };
-  // }, shallow);
-
   useEffect(() => {
     const triggerGetServerTime = async () => {
       const serverTimeEstablishedRequest = await getServerTime();
       const serverTimeEstablished = serverTimeEstablishedRequest.data;
-      const serverTimeOffsetSeconds = serverTimeEstablished.serverTime._seconds - performance.timeOrigin / 1000;
-      const estimatedServerStartTime = new Timestamp(serverTimeEstablished.serverTime._seconds - serverTimeOffsetSeconds, 0);
-
-      // console.log({
-      //   serverTimeEstablished,
-      //   serverTimeOffsetSeconds,
-      //   serverStartTime: estimatedServerStartTime,
-      // });
+      const serverTimeOffsetSeconds = serverTimeEstablished.seconds - performance.timeOrigin / 1000;
+      const estimatedServerStartTime = new Timestamp(serverTimeEstablished.seconds - serverTimeOffsetSeconds, 0);
 
       initializeServerTimestampState({
         serverTimeEstablished,
@@ -70,20 +54,6 @@ export const Timers = () => {
       );
 
       updateCurrentServerTime(currentServerTime);
-
-      // PUT THIS IN AN onSchedule FUNCTION
-      // check if there are any completed events that need removing from eventStore
-      // if (Object.entries(gameEvents).length === 0) {
-      //   return;
-      // }
-      //
-      // const nextGameEvent = Object.entries(gameEvents)[0];
-      // const nextGameEventAvailableAfter = nextGameEvent[1].availableAfter;
-      //
-      // if (currentServerTime.seconds >= nextGameEventAvailableAfter._seconds) {
-      //   console.log('Remove ship event emitted for', `PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
-      //   emitter.emit(`PURCHASE_SHIP:${nextGameEvent[1].entityId}`);
-      // }
     }, 1000);
 
     return () => clearInterval(interval);

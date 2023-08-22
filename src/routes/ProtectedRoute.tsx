@@ -2,7 +2,7 @@ import { useUser } from 'reactfire';
 import { Navigate } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { CircularProgress, Grid } from '@mui/material';
-import { REACT_FIRE_HOOK_STATUS } from '../utils/constants.ts';
+import { REACT_FIRE_HOOK_STATUS } from '../types/constants.ts';
 
 export interface ProtectedRouteProps {
   children?: ReactNode

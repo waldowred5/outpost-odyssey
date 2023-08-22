@@ -13,7 +13,7 @@ import {
   LoginButtonWrapper,
 } from './styles';
 import { useSigninCheck } from 'reactfire';
-import { REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
 
 export const Home = () => {
   const navigate = useNavigate();

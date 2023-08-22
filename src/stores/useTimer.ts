@@ -22,7 +22,7 @@ interface TimerState {
   updateCurrentServerTime: (currentServerTime: Timestamp) => void,
 }
 
-export default create<TimerState>((set, get) => {
+export default create<TimerState>((set) => {
     return {
       currentServerTime: null,
       serverTimeEstablished: null,

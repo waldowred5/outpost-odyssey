@@ -1,25 +1,12 @@
 import { StyledEventQueue, EventQueueItem, EventQueueItemContainer, EventQueueItemText } from './styles.ts';
-import useEvent from '../../../stores/useEvent.ts';
-import { shallow } from 'zustand/shallow';
 import { useEffect, useRef, useState } from 'react';
 import useTimer from '../../../stores/useTimer.ts';
 import { useFirestore, useFirestoreCollectionData, useUser } from 'reactfire';
 import { collection, orderBy, query } from 'firebase/firestore';
-import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
+import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
+import { GameEvents } from '../../../types/models.ts';
 
 export const EventQueue = () => {
-// console.log('EventQueue');
-
-  // const maxItems = 5;
-
-  // const {
-  //   gameEvents,
-  // } = useEvent((state) => {
-  //   return {
-  //     gameEvents: state.gameEvents,
-  //   };
-  // }, shallow);
-
   const firestore = useFirestore();
   const { data: user } = useUser();
   const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
@@ -28,7 +15,7 @@ export const EventQueue = () => {
     idField: 'id', // this field will be added to the object created from each document
   });
 
-  const [gameEvents, setGameEvents] = useState({});
+  const [gameEvents, setGameEvents] = useState<GameEvents>({});
 
   useEffect(() => {
     if (shipStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS) {
@@ -36,8 +23,6 @@ export const EventQueue = () => {
     }
 
     const shipEvents = shipData.reduce((acc, ship) => {
-      console.log(ship);
-
       if (ship.isAvailable) {
         return acc;
       }
@@ -47,13 +32,11 @@ export const EventQueue = () => {
         [`${ship.availableAfter.seconds}:${ship.id}`]: {
           availableAfter: ship.availableAfter,
           isAvailable: ship.isAvailable,
-          eventType: 'EVENT_TYPE',
+          eventType: 'PURCHASE_SHIP',
           entityId: ship.id,
         }
       };
     }, {});
-
-    console.log('shipEvents', shipEvents);
 
     setGameEvents(shipEvents);
   }, [shipStatus, shipData]);
@@ -78,8 +61,6 @@ export const EventQueue = () => {
       <EventQueueItemContainer>
         {
           Object.entries(gameEvents).map((gameEvent, index) => {
-            console.log('gameEvent', gameEvent);
-
             return (
               <EventQueueItem key={`EventQueue: ${index}`}>
                 <EventQueueItemText>

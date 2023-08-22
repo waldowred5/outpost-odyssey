@@ -32,6 +32,7 @@ module.exports = {
     'quotes': [
       'error',
       'single'
-    ]
+    ],
+    'react-hooks/exhaustive-deps': 'off',
   },
 }

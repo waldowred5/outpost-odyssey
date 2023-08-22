@@ -4,8 +4,15 @@ import { useEffect, useRef } from 'react';
 import useTimer from '../../../stores/useTimer.ts';
 import { useFunctions, useUser } from 'reactfire';
 import { httpsCallable } from 'firebase/functions';
+import { Ship } from '../../../types/models.ts';
+import { CLOUD_FUNCTION } from '../../../types/constants.ts';
 
-export const ShipTile = ({ shipDataItem }) => {
+interface ShipTileProps {
+  shipData: Ship,
+  shipId: string,
+}
+
+export const ShipTile = ({ shipData, shipId }: ShipTileProps) => {
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
   const shipTileButtonRef = useRef<HTMLButtonElement | null>(null);
   const shipTileHeadingRef = useRef<HTMLHeadingElement | null>(null);
@@ -17,7 +24,7 @@ export const ShipTile = ({ shipDataItem }) => {
       const { currentServerTime } = state;
 
       if (shipTileHeadingRef.current && currentServerTime?.seconds) {
-        const timeLeft = Math.ceil(shipDataItem.availableAfter.seconds - currentServerTime?.seconds);
+        const timeLeft = Math.ceil(shipData.availableAfter.seconds - currentServerTime.seconds);
 
         shipTileHeadingRef.current.textContent = `${timeLeft.toString()} SEC`;
       }
@@ -27,11 +34,6 @@ export const ShipTile = ({ shipDataItem }) => {
   useEffect(() => {
     const unsubscribeEffect = () => {
       const { currentServerTime } = useTimer.getState();
-
-      // console.log('currentServerTime', currentServerTime);
-      // console.log('shipDataItem.availableAfter', shipDataItem.availableAfter);
-      // const disabled = !!(currentServerTime?.seconds < shipDataItem.availableAfter.seconds);
-      // const timeLeftSeconds = Math.ceil(shipDataItem.availableAfter.toMillis() / 1000 - currentServerTime?.toMillis() / 1000);
 
       if (shipTileHeadingRef.current && currentServerTime) {
         shipTileHeadingRef.current.textContent = currentServerTime.seconds.toString();
@@ -43,24 +45,11 @@ export const ShipTile = ({ shipDataItem }) => {
     };
   }, []);
 
-  // const {
-  //   gameEvents,
-  // } = useEvent((state) => {
-  //   return {
-  //     gameEvents: state.gameEvents,
-  //   };
-  // }, shallow);
-  //
-  // const [isDisabled, setIsDisabled] = useState(false);
-  //
-  // useEffect(() => {
-  //   const disabled = !!gameEvents[`${shipDataItem.availableAfter.seconds}:${shipDataItem.id}`];
-  //   setIsDisabled(disabled);
-  // }, [gameEvents]);
-
   const functions = useFunctions();
-  const gameEventQueueCallback = httpsCallable(functions, 'gameEventQueueCallback');
+  const gameEventQueueCallback = httpsCallable(functions, CLOUD_FUNCTION.GAME_EVENT_QUEUE_CALLBACK);
   const { data: user } = useUser();
+
+  // TODO: Remove this once local testing of cloud tasks queue is setup
   const testClickHandler = async (shipId: string) => {
     if (!user) {
       console.log('no user');
@@ -71,18 +60,18 @@ export const ShipTile = ({ shipDataItem }) => {
     await gameEventQueueCallback({ docPath: `players/${user.uid}/ships/${shipId}` });
   };
 
-  const disabled = !shipDataItem.isAvailable;
+  const disabled = !shipData.isAvailable;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', rowGap: '4px' }}>
       <Tile
-        key={shipDataItem.id}
+        key={shipId}
         ref={shipTileButtonRef}
-        onClick={() => console.log(`ship ${shipDataItem.id} selected`, shipDataItem)}
+        onClick={() => console.log(`ship ${shipId} selected`, shipData)}
         disabled={disabled}
       >
         <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
-        <p>{shipDataItem.shipClass}</p>
+        <p>{shipData.shipClass}</p>
         {
           disabled ?
             <>
@@ -91,11 +80,11 @@ export const ShipTile = ({ shipDataItem }) => {
                 ref={shipTileHeadingRef}
               >PENDING</h3>
             </> :
-            <p>{shipDataItem.id.substring(0, 4)}</p>
+            <p>{shipId.substring(0, 4)}</p>
         }
       </Tile>
       {
-        disabled && <button onClick={() => testClickHandler(shipDataItem.id)}>MAKE AVAILABLE</button>
+        disabled && <button onClick={() => testClickHandler(shipId)}>MAKE AVAILABLE</button>
       }
     </div>
   );

@@ -1,7 +1,7 @@
 import { auth } from 'firebase-functions';
 import { Timestamp } from 'firebase-admin/firestore';
 import { db } from './db';
-import { FIRESTORE_COLLECTION } from '../../src/utils/constants';
+import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 
 export const createPlayer = auth.user().onCreate((user) => {
   try {
