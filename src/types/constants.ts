@@ -1,5 +1,5 @@
 export const CLOUD_FUNCTION = {
-  GAME_EVENT_QUEUE_CALLBACK: 'gameEventQueueCallback',
+  GAME_EVENT_QUEUE_CALLBACK_MAUNAL: 'gameEventQueueCallbackManual',
   GET_SERVER_TIME: 'getServerTime',
   PURCHASE_SHIP: 'purchaseShip',
 };

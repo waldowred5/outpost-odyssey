@@ -17,15 +17,26 @@ Hosted [here](https://outpost-odyssey-web.web.app/) on Firebase
 ### Getting Started For the First Time
 - Install firebase CLI (firebase-tools) globally: `npm install -g firebase-tools`
 - Login to the CLI: `firebase login`
-- Ensure experimental webframeworks is enabled
+- Ensure experimental webframeworks is enabled: `firebase experiments:enable webframeworks`
+- Install dependencies in root and functions directories: `yarn install` && `cd functions && yarn install`
+- To emulate the cloud tasks queue, we use a docker image. This requires one line of config after installation:
+  - Install docker
+  - Navigate to and update docker hosts settings file  `sudo nano /etc/hosts`
+  - Add the following line under `# Added by Docker Desktop`:
+    - `XXX.XXX.XXX.XXX host.docker.internal` where `XXX.XXX.XXX.XXX` is your machine address
+      - Your machine address can be found in the Network section of System Preferences
 
 ### Recommended Workflow
 - In one terminal window build ***serverless cloud functions*** (backend) locally in watch mode (see below)
-- In a separate terminal window, run the web app and firebase ***emulators*** locally (see below)
+- In a separate terminal window, ***emulate the cloud tasks queue*** by running the docker image (see below)
+- In another separate terminal window, run the web app and firebase ***emulators*** locally (see below)
 
 To build and watch for changes in ***serverless cloud functions***:
 - Navigate to `functions/`
 - Run `yarn build:watch`
+
+To ***emulate the cloud tasks queue*** locally:
+- In the root directory, run `yarn serve:queue`
 
 To simultaneously run the web app and ***emulators*** locally:
 - First Time: `yarn serve:reseed` (this will reseed your local emulator with the static seed data)

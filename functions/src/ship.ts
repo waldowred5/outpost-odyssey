@@ -1,6 +1,7 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
+// import { setDoc, doc } from 'firebase/firestore';
 import { db } from './db';
 import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 import { Timestamp } from 'firebase-admin/firestore';
@@ -55,6 +56,7 @@ export const purchaseShip = onCall(async (request) => {
     };
 
     await userRef.update({ balance: user.balance - ship.price });
+    // const shipInstanceRef = await setDoc(doc(db, userRef, 'ships'), ship);
     const shipInstanceRef = await userRef.collection('ships').add(ship);
 
     await addTaskToCloudTaskQueue({
@@ -64,29 +66,5 @@ export const purchaseShip = onCall(async (request) => {
   } catch (e) {
     logger.error('Error purchasing ship', e);
     throw new https.HttpsError('internal', 'Error purchasing ship');
-  }
-});
-
-/*
-TODO: Strip out onCall trigger and use onRequest instead
-      (remove onCall trigger in FE as well)
-*/
-export const gameEventQueueCallback = onCall(async (req) => {
-// export const gameEventQueueCallback = onRequest(async (req, res) => {
-  const payload = req.data;
-  // const payload = req.body;
-  try {
-    logger.log('Received game event queue callback', payload);
-
-    const entityDocRef = await db.doc(payload.docPath);
-    await entityDocRef.update({ isAvailable: true });
-
-    // return {
-    //   entityDocRef,
-    // };
-    // res.send(200);
-  } catch (error) {
-    logger.error(error);
-    // res.status(500).send(error);
   }
 });

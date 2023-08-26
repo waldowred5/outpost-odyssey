@@ -24,6 +24,8 @@ export const ShipTile = ({ shipData, shipId }: ShipTileProps) => {
       const { currentServerTime } = state;
 
       if (shipTileHeadingRef.current && currentServerTime?.seconds) {
+        console.log('shipData.availableAfter.seconds', shipData.availableAfter.seconds);
+        console.log('currentServerTime.seconds', currentServerTime.seconds);
         const timeLeft = Math.ceil(shipData.availableAfter.seconds - currentServerTime.seconds);
 
         shipTileHeadingRef.current.textContent = `${timeLeft.toString()} SEC`;
@@ -46,7 +48,7 @@ export const ShipTile = ({ shipData, shipId }: ShipTileProps) => {
   }, []);
 
   const functions = useFunctions();
-  const gameEventQueueCallback = httpsCallable(functions, CLOUD_FUNCTION.GAME_EVENT_QUEUE_CALLBACK);
+  const gameEventQueueCallbackManual = httpsCallable(functions, CLOUD_FUNCTION.GAME_EVENT_QUEUE_CALLBACK_MAUNAL);
   const { data: user } = useUser();
 
   // TODO: Remove this once local testing of cloud tasks queue is setup
@@ -57,7 +59,7 @@ export const ShipTile = ({ shipData, shipId }: ShipTileProps) => {
       return;
     }
 
-    await gameEventQueueCallback({ docPath: `players/${user.uid}/ships/${shipId}` });
+    await gameEventQueueCallbackManual({ docPath: `players/${user.uid}/ships/${shipId}` });
   };
 
   const disabled = !shipData.isAvailable;

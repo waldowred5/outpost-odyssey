@@ -16,6 +16,7 @@
   "main": "lib/functions/src/index.js",
   "dependencies": {
     "@google-cloud/tasks": "^4.0.0",
+    "@grpc/grpc-js": "1.8.21",
     "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1"
   },
