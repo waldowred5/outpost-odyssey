@@ -1,14 +1,12 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
-// import { setDoc, doc } from 'firebase/firestore';
 import { db } from './db';
 import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 import { Timestamp } from 'firebase-admin/firestore';
 import { addTaskToCloudTaskQueue } from './eventQueue';
 import { Ship, ShipBlueprint } from '../../src/types/models';
 
-// TODO: Fix bug where function runs for the duration of the delay
 export const purchaseShip = onCall(async (request) => {
   if (request.auth === undefined) {
     logger.log('Unauthenticated request');
@@ -56,7 +54,6 @@ export const purchaseShip = onCall(async (request) => {
     };
 
     await userRef.update({ balance: user.balance - ship.price });
-    // const shipInstanceRef = await setDoc(doc(db, userRef, 'ships'), ship);
     const shipInstanceRef = await userRef.collection('ships').add(ship);
 
     await addTaskToCloudTaskQueue({
