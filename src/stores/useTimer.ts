@@ -19,6 +19,7 @@ interface TimerState {
       serverTimeOffsetSeconds,
       serverStartTime
     }: ServerTimestampState) => void,
+  resetServerTimestampState: () => void,
   updateCurrentServerTime: (currentServerTime: Timestamp) => void,
 }
 
@@ -41,6 +42,16 @@ export default create<TimerState>((set) => {
             serverTimeEstablished,
             serverTimeOffsetSeconds,
             serverStartTime,
+          };
+        });
+      },
+
+      resetServerTimestampState: () => {
+        set(() => {
+          return {
+            serverTimeEstablished: null,
+            serverTimeOffsetSeconds: 0,
+            serverStartTime: null,
           };
         });
       },

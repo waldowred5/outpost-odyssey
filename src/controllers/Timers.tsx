@@ -1,7 +1,7 @@
 import { useFunctions } from 'reactfire';
 import { httpsCallable } from 'firebase/functions';
 import { CLOUD_FUNCTION } from '../types/constants.ts';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useTimer from '../stores/useTimer.ts';
 import { Timestamp } from 'firebase/firestore';
 import { shallow } from 'zustand/shallow';
@@ -16,7 +16,10 @@ const animationInterval = ({ ms, signal, callback }: AnimationIntervalProps) => 
   const start = performance.now();
 
   const frame = (time: number) => {
-    if (signal.aborted) return;
+    if (signal.aborted) {
+      return;
+    }
+
     callback(time);
     scheduleFrame(time);
   };
@@ -36,16 +39,22 @@ export const Timers = () => {
   const functions = useFunctions();
   const getServerTime = httpsCallable<void, Timestamp>(functions, CLOUD_FUNCTION.GET_SERVER_TIME);
   const {
+    currentServerTime,
     serverStartTime,
     initializeServerTimestampState,
+    resetServerTimestampState,
     updateCurrentServerTime,
   } = useTimer((state) => {
     return {
+      currentServerTime: state.currentServerTime,
       serverStartTime: state.serverStartTime,
       initializeServerTimestampState: state.initializeServerTimestampState,
+      resetServerTimestampState: state.resetServerTimestampState,
       updateCurrentServerTime: state.updateCurrentServerTime,
     };
   }, shallow);
+
+  const [abortController, setAbortController] = useState(new AbortController());
 
   const triggerGetServerTime = async () => {
     const serverTimeEstablishedRequest = await getServerTime();
@@ -71,11 +80,11 @@ export const Timers = () => {
 
     console.log('Server start time established!');
 
-    const controller = new AbortController();
+    setAbortController(new AbortController());
 
     animationInterval({
       ms: 1000,
-      signal: controller.signal,
+      signal: abortController.signal,
       callback: (time) => {
         const newServerTime = new Timestamp(
           serverStartTime.seconds + (time / 1000),
@@ -87,9 +96,29 @@ export const Timers = () => {
     });
 
     return () => {
-      controller.abort();
+      abortController.abort();
     };
   }, [serverStartTime]);
+
+  useEffect(() => {
+    if (!serverStartTime) {
+      return;
+    }
+
+    if (!currentServerTime) {
+      return;
+    }
+
+    const serverTimeDrift = currentServerTime.toMillis() - Date.now();
+    if (Math.abs(serverTimeDrift) < 1000) {
+      return;
+    }
+
+    console.log('Server time drift detected!');
+
+    abortController.abort();
+    resetServerTimestampState();
+  }, [currentServerTime]);
 
   return <></>;
 };
