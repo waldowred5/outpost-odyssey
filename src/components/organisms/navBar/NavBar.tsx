@@ -173,11 +173,11 @@ export const NavBar = () => {
       <TertiaryTab>
         <TertiaryText>{user && user.email}</TertiaryText>
         {
-          user && <TertiaryButton
-            onClick={handleLogout}
-          >
-            LOGOUT
-          </TertiaryButton>
+          user
+            ? <TertiaryButton onClick={handleLogout}>
+              LOGOUT
+            </TertiaryButton>
+            : null
         }
       </TertiaryTab>
     </>

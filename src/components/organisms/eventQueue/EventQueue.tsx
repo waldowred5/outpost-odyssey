@@ -43,6 +43,8 @@ export const EventQueue = () => {
 
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const headingRefTest = useRef<HTMLHeadingElement | null>(null);
+  const headingRefDrift = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => useTimer.subscribe(
     (state) => {
@@ -51,7 +53,18 @@ export const EventQueue = () => {
       const { currentServerTime } = state;
 
       if (headingRef.current && currentServerTime?.seconds) {
-        headingRef.current.textContent = `SERVER TIME: ${currentServerTime.seconds.toString().substring(6, 10)}`;
+        headingRef.current.textContent = `SERVER TIME: ${currentServerTime.seconds.toString().substring(5, 10)}`;
+      }
+
+      // TODO: Remove this once drifting is fixed
+      if (headingRefTest.current) {
+        const actualTime = Date.now() / 1000;
+        headingRefTest.current.textContent = `ACTUAL TIME: ${actualTime.toString().substring(5, 10)}`;
+      }
+
+      if (headingRefDrift.current && currentServerTime?.seconds) {
+        const driftTime = currentServerTime.toMillis() - Date.now();
+        headingRefDrift.current.textContent = `DRIFT (ms): ${Math.round(driftTime)}`;
       }
     }
   ), []);
@@ -72,6 +85,12 @@ export const EventQueue = () => {
         }
         <EventQueueItem style={{ backgroundColor: 'red' }}>
           <EventQueueItemText ref={headingRef}/>
+        </EventQueueItem>
+        <EventQueueItem style={{ backgroundColor: 'red' }}>
+          <EventQueueItemText ref={headingRefTest}/>
+        </EventQueueItem>
+        <EventQueueItem style={{ backgroundColor: 'red' }}>
+          <EventQueueItemText ref={headingRefDrift}/>
         </EventQueueItem>
       </EventQueueItemContainer>
     </StyledEventQueue>

@@ -7,7 +7,7 @@ export const StyledEventQueue = styled.div`
   z-index: 1000;
   bottom: 8px;
   right: 8px;
-  width: 184px;
+  width: 200px;
   justify-content: flex-start;
   background-color: red;
 `;
@@ -20,6 +20,7 @@ export const EventQueueItemContainer = styled.div`
 
 export const EventQueueItem = styled.div`
   display: flex;
+  flex-direction: column;
   background-color: darkblue;
   border-radius: 4px;
   margin: 4px;
