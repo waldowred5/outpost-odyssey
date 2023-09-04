@@ -5,8 +5,8 @@ import {
 import { useFirestore, useFirestoreCollectionData, useFirestoreDocData, useFunctions, useUser } from 'reactfire';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { CLOUD_FUNCTION, FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
-import { FaRocket } from 'react-icons/fa';
+import { CLOUD_FUNCTION, FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
+import { BsRocketTakeoff } from 'react-icons/bs';
 
 export const Marketplace = () => {
   const functions = useFunctions();
@@ -14,7 +14,7 @@ export const Marketplace = () => {
   const purchaseShip = httpsCallable(functions, CLOUD_FUNCTION.PURCHASE_SHIP);
 
   const handlePurchaseShip = async (shipClass: string) => {
-    return purchaseShip({ shipClass });
+    await purchaseShip({ shipClass });
   };
 
   const { data: user } = useUser();
@@ -39,7 +39,7 @@ export const Marketplace = () => {
                   onClick={() => handlePurchaseShip(shipClass.shipClass)}
                   disabled={userData?.balance < shipClass.price}
                 >
-                  <FaRocket style={{ fontSize: '32px' }}/>
+                  <BsRocketTakeoff style={{ fontSize: '32px' }}/>
                   <p>{shipClass.shipClass}</p>
                   <h3>$ {shipClass.price}</h3>
                 </Tile>

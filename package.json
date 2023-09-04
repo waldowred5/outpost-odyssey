@@ -9,7 +9,10 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "serve": "firebase emulators:start --import=./.seedLocal --export-on-exit",
-    "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal"
+    "serve:queue": "docker-compose up",
+    "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal",
+    "seed:export": "firebase emulators:export ./.seed",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -22,6 +25,8 @@
     "@mui/material": "^5.14.2",
     "@types/styled-components": "^5.1.26",
     "eslint-plugin-react": "^7.33.1",
+    "firebase-admin": "^11.10.1",
+    "husky": "^8.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",

@@ -1,13 +1,13 @@
 import { StyledShipyard } from './styles';
-import { ShipyardSectionContainer, Tile, TileContainer } from './styles.ts';
-import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../utils/constants.ts';
-import { FaRocket } from 'react-icons/fa';
+import { ShipyardSectionContainer, TileContainer } from './styles.ts';
+import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
 import { useFirestore, useFirestoreCollectionData, useUser } from 'reactfire';
 import { collection, orderBy, query } from 'firebase/firestore';
+import { ShipTile } from '../../molecules/shipTile/ShipTile.tsx';
+import { Ship } from '../../../types/models.ts';
 
 export const Shipyard = () => {
   const firestore = useFirestore();
-
   const { data: user } = useUser();
   const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
   const playerShipsQuery = query(playerShipsCollection, orderBy('price', 'asc'));
@@ -19,18 +19,15 @@ export const Shipyard = () => {
     <StyledShipyard>
       <h1>SHIPYARD</h1>
       <ShipyardSectionContainer>
-        <TileContainer>
+        <TileContainer
+        >
           {
             shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS && shipData.map((shipDataItem) => {
+              const shipData = shipDataItem as Ship;
+              const shipId = shipDataItem.id;
+
               return (
-                <Tile
-                  key={shipDataItem.id}
-                  onClick={() => console.log(`ship ${shipDataItem.id} selected`, shipDataItem)}
-                >
-                  <FaRocket style={{ fontSize: '32px' }}/>
-                  <p>{shipDataItem.shipClass}</p>
-                  <h3>{shipDataItem.id.substring(0, 4)}</h3>
-                </Tile>
+                <ShipTile key={shipId} shipData={shipData} shipId={shipId} />
               );
             })
           }
