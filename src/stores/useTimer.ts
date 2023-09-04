@@ -65,5 +65,4 @@ export default create<TimerState>((set) => {
       }
     };
   }
-)
-;
+);

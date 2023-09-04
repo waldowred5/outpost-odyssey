@@ -8,7 +8,7 @@ import { GameEvents } from '../../../types/models.ts';
 
 export const EventQueue = () => {
   const firestore = useFirestore();
-  const { data: user } = useUser();
+  const { status: userStatus, data: user } = useUser();
   const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
   const playerShipsQuery = query(playerShipsCollection, orderBy('price', 'asc'));
   const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
@@ -39,7 +39,7 @@ export const EventQueue = () => {
     }, {});
 
     setGameEvents(shipEvents);
-  }, [shipStatus, shipData]);
+  }, [shipStatus, shipData, userStatus]);
 
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
   const headingRef = useRef<HTMLHeadingElement | null>(null);

@@ -9,12 +9,10 @@ interface PrimaryLayoutProps {
 
 export const PrimaryLayout = ({ children }: PrimaryLayoutProps) => {
   return (
-    <>
-      <StyledPrimaryLayout>
-        <NavBar/>
-        <EventQueue/>
-        { children }
-      </StyledPrimaryLayout>
-    </>
+    <StyledPrimaryLayout>
+      <NavBar/>
+      <EventQueue/>
+      {children}
+    </StyledPrimaryLayout>
   );
 };

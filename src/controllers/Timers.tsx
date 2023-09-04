@@ -42,7 +42,7 @@ export const Timers = () => {
     currentServerTime,
     serverStartTime,
     initializeServerTimestampState,
-    resetServerTimestampState,
+    // resetServerTimestampState,
     updateCurrentServerTime,
   } = useTimer((state) => {
     return {
@@ -58,6 +58,7 @@ export const Timers = () => {
 
   const triggerGetServerTime = async () => {
     const serverTimeEstablishedRequest = await getServerTime();
+
     const serverTimeEstablished = serverTimeEstablishedRequest.data;
     const serverTimeOffsetSeconds = serverTimeEstablished.seconds - performance.timeOrigin / 1000;
     const estimatedServerStartTime = new Timestamp(serverTimeEstablished.seconds - serverTimeOffsetSeconds, 0);
@@ -101,11 +102,7 @@ export const Timers = () => {
   }, [serverStartTime]);
 
   useEffect(() => {
-    if (!serverStartTime) {
-      return;
-    }
-
-    if (!currentServerTime) {
+    if (!serverStartTime || !currentServerTime) {
       return;
     }
 
@@ -116,8 +113,10 @@ export const Timers = () => {
 
     console.log('Server time drift detected!');
 
-    abortController.abort();
-    resetServerTimestampState();
+    // TODO: This is a hack to reset the server time. It should be done in a more elegant way.
+    location.reload();
+    // resetServerTimestampState();
+    // console.log('Server time reset!');
   }, [currentServerTime]);
 
   return <></>;

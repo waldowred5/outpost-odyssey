@@ -4,7 +4,6 @@ import {
   SecondaryStatGrid,
   StatTextButton,
   StyledStatsBar,
-  PrimaryStatTextButton,
   StatTextButtonLabel,
   TertiaryButton,
   TertiaryTab,
@@ -12,14 +11,16 @@ import {
   TextUnskewWrapper, SecondaryStatGridContainer,
 } from './styles';
 import { TbWorldDollar } from 'react-icons/tb';
-import { useAuth, useFirestoreCollectionData, useFirestoreDocData, useUser } from 'reactfire';
+import { useFirestoreCollectionData, useFirestoreDocData, useUser, useFirestore } from 'reactfire';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PROTECTED_ROUTES } from '../../../types/constants.ts';
 import { signOut } from 'firebase/auth';
 import { collection, doc, query } from 'firebase/firestore';
-import { useFirestore } from 'reactfire';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
 import { BsRocketTakeoffFill } from 'react-icons/bs';
+import { useEffect, useState } from 'react';
+import { Auth, User } from '@firebase/auth';
+import { BalanceButton } from '../../molecules/balanceButton/BalanceButton.tsx';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -33,19 +34,50 @@ const NAV_BUTTON = {
 };
 
 export const NavBar = () => {
-  const auth = useAuth();
-  const { data: user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
+  const firestore = useFirestore();
+  const { status, data: user } = useUser();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (status === REACT_FIRE_HOOK_STATUS.SUCCESS && user) {
+      setCurrentUser(user);
+    }
+  }, [status]);
+
+  type FirebaseUser = User & { auth: Auth };
+
+  // TODO: THIS IS A HACK! REMOVE THIS WHEN REACT-FIRE IS FIXED
+  /*
+  This solves a major problem where the whole app errors when trying to fetch any firestore document
+  To recreate the bug (after commenting out the clearFirestoreCache invocation below):
+  Login to the app, then logout, then login again. You will see the following error in the console:
+  `Uncaught FirebaseError: Null value error. for 'list' @ L6`
+  */
+  const clearFirestoreCache = () => {
+    const reactFirePreloadedObservables = (globalThis as Record<string, unknown>)['_reactFirePreloadedObservables'] as
+      | Map<string, unknown>
+      | undefined;
+    if (reactFirePreloadedObservables) {
+      Array.from(reactFirePreloadedObservables.keys())
+        .filter((key) => key.includes('firestore'))
+        .forEach((key) =>
+          reactFirePreloadedObservables.delete(key)
+        );
+    }
+  };
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('/');
-      console.log('You are logged out');
-    } catch (error) {
-      console.log((error as Error).message);
-    }
+    const { auth } = currentUser as FirebaseUser;
+      try {
+        await signOut(auth);
+        clearFirestoreCache();
+        navigate('/');
+        console.log('You are logged out');
+      } catch (error) {
+        console.log((error as Error).message);
+      }
   };
 
   const handleNavigate = (route: string) => {
@@ -54,22 +86,20 @@ export const NavBar = () => {
     }
   };
 
-  const firestore = useFirestore();
-
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
   });
 
-  const playerRef = doc(firestore, FIRESTORE_COLLECTION.PLAYERS, `${user?.uid}`);
+  const playerRef = doc(firestore, FIRESTORE_COLLECTION.PLAYERS, `${currentUser?.uid}`);
   const { data: playerData } = useFirestoreDocData(playerRef);
   const balance = playerData?.balance || '-';
   const balanceModifier = balance < 0 ? '-' : '';
   const balanceAmount = balance < 0 ? formatter.format(balance * -1) : formatter.format(balance);
   const balanceString = balance === '-' ? '-' : `${balanceModifier} ${balanceAmount}`;
 
-  const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
+  const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${currentUser?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
   const playerShipsQuery = query(playerShipsCollection);
   const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
     idField: 'id', // this field will be added to the object created from each document
@@ -126,22 +156,15 @@ export const NavBar = () => {
     // }
   };
 
+  if (status !== REACT_FIRE_HOOK_STATUS.SUCCESS || !currentUser) {
+    return null;
+  }
+
   return (
     <>
       <StyledStatsBar>
         <PrimaryTab>
-          <PrimaryStatTextButton
-            onClick={() => handleNavigate(PROTECTED_ROUTES.FINANCES)}
-            $balance={balance}
-            $isActiveScene={location.pathname === PROTECTED_ROUTES.FINANCES}
-          >
-            <TextUnskewWrapper>
-              {balanceString}
-            </TextUnskewWrapper>
-          </PrimaryStatTextButton>
-          <StatTextButtonLabel>
-            FINANCES
-          </StatTextButtonLabel>
+          <BalanceButton balance={balance} balanceString={balanceString} handleNavigate={handleNavigate}/>
         </PrimaryTab>
         <SecondaryTab>
           <SecondaryStatGrid>
@@ -171,9 +194,9 @@ export const NavBar = () => {
         </SecondaryTab>
       </StyledStatsBar>
       <TertiaryTab>
-        <TertiaryText>{user && user.email}</TertiaryText>
+        <TertiaryText>{currentUser && currentUser.email}</TertiaryText>
         {
-          user
+          currentUser
             ? <TertiaryButton onClick={handleLogout}>
               LOGOUT
             </TertiaryButton>
