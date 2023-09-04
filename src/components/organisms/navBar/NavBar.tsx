@@ -8,7 +8,7 @@ import {
   TertiaryButton,
   TertiaryTab,
   TertiaryText,
-  TextUnskewWrapper, SecondaryStatGridContainer,
+  TextUnskewWrapper, SecondaryStatGridContainer, PrimaryStatTextButton,
 } from './styles';
 import { TbWorldDollar } from 'react-icons/tb';
 import { useFirestoreCollectionData, useFirestoreDocData, useUser, useFirestore } from 'reactfire';
@@ -20,7 +20,6 @@ import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/con
 import { BsRocketTakeoffFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
 import { Auth, User } from '@firebase/auth';
-import { BalanceButton } from '../../molecules/balanceButton/BalanceButton.tsx';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -164,7 +163,18 @@ export const NavBar = () => {
     <>
       <StyledStatsBar>
         <PrimaryTab>
-          <BalanceButton balance={balance} balanceString={balanceString} handleNavigate={handleNavigate}/>
+          <PrimaryStatTextButton
+            onClick={() => handleNavigate(PROTECTED_ROUTES.FINANCES)}
+            $balance={balance}
+            $isActiveScene={location.pathname === PROTECTED_ROUTES.FINANCES}
+          >
+            <TextUnskewWrapper>
+              {balanceString}
+            </TextUnskewWrapper>
+          </PrimaryStatTextButton>
+          <StatTextButtonLabel>
+            FINANCES
+          </StatTextButtonLabel>
         </PrimaryTab>
         <SecondaryTab>
           <SecondaryStatGrid>
