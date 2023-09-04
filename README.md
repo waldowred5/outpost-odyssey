@@ -10,7 +10,7 @@ Hosted [here](https://outpost-odyssey-web.web.app/) on Firebase
 - `functions/` - Firebase Cloud Functions (serverless backend)
 - `.seed/` - Seed data for the Firebase emulator
 
-![Visualization of this repo](./repo-structure.svg)
+![Visualization of this repo](./diagram.svg)
 
 ## Tips and Tricks
 
