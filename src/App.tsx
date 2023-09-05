@@ -19,9 +19,7 @@ function App() {
   const authInstance = getAuth(app);
   const functionsInstance = getFunctions(app);
 
-  console.log('import.meta', import.meta);
-
-  if (import.meta.env.DEV) {
+  if (window.location.hostname === 'localhost') {
     // Set up emulators
     connectStorageEmulator(storageInstance, '127.0.0.1', 9199);
     connectAuthEmulator(authInstance, 'http://127.0.0.1:9099', {
