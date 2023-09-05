@@ -19,6 +19,8 @@ function App() {
   const authInstance = getAuth(app);
   const functionsInstance = getFunctions(app);
 
+  console.log('import.meta', import.meta);
+
   if (import.meta.env.DEV) {
     // Set up emulators
     connectStorageEmulator(storageInstance, '127.0.0.1', 9199);
