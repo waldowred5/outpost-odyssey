@@ -1,7 +1,7 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 
 export const getServerTime = onCall(async (request) => {
   if (request.auth === undefined) {
