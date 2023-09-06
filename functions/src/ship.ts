@@ -2,18 +2,12 @@ import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
 import { db } from './db';
-import { CORS_CONFIG, FIRESTORE_COLLECTION } from '../../src/types/constants';
+import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 import { Timestamp } from 'firebase-admin/firestore';
 import { addTaskToCloudTaskQueue } from './eventQueue';
 import { Ship, ShipBlueprint } from '../../src/types/models';
 
 export const purchaseShip = onCall(
-  {
-    cors: [
-      CORS_CONFIG.OUTPOST_ODYSSEY_FIREBASE_APP,
-      CORS_CONFIG.OUTPOST_ODYSSEY_WEB_APP,
-    ],
-  },
   async (request) => {
     if (request.auth === undefined) {
       logger.log('Unauthenticated request');
