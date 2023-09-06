@@ -4,11 +4,6 @@ export const CLOUD_FUNCTION = {
   PURCHASE_SHIP: 'purchaseShip',
 };
 
-export const CORS_CONFIG = {
-  OUTPOST_ODYSSEY_WEB_APP: 'outpost-odyssey-web.web.app',
-  OUTPOST_ODYSSEY_FIREBASE_APP: 'outpost-odyssey-web.firebaseapp.com/',
-};
-
 export const FIRESTORE_COLLECTION = {
   PLAYERS: 'players',
   SHIP_CLASSES: 'shipClasses',

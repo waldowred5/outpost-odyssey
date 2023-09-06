@@ -2,15 +2,8 @@ import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions/v2';
 import { https } from 'firebase-functions';
 import { Timestamp } from 'firebase-admin/firestore';
-import { CORS_CONFIG } from '../../src/types/constants';
 
 export const getServerTime = onCall(
-  {
-    cors: [
-      CORS_CONFIG.OUTPOST_ODYSSEY_FIREBASE_APP,
-      CORS_CONFIG.OUTPOST_ODYSSEY_WEB_APP,
-    ],
-  },
   async (request) => {
     if (request.auth === undefined) {
       logger.log('Unauthenticated request');
