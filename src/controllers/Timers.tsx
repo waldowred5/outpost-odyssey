@@ -111,10 +111,10 @@ export const Timers = () => {
       return;
     }
 
-    console.log('Server time drift detected!', { serverStartTime });
+    console.log('Server time drift detected!');
 
     // TODO: This is a hack to reset the server time. It should be done in a more elegant way.
-    // location.reload();
+    location.reload();
     // resetServerTimestampState();
     // console.log('Server time reset!');
   }, [currentServerTime]);
