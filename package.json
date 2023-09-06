@@ -12,6 +12,7 @@
     "serve:queue": "docker-compose up",
     "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal",
     "seed:export": "firebase emulators:export ./.seed",
+    "deploy:functions": "firebase deploy --only functions",
     "prepare": "husky install"
   },
   "dependencies": {

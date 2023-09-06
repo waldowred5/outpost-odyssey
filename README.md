@@ -54,6 +54,10 @@ To update the static seed data checked into the repo:
 - Ensure the emulator is running with the data you want to export
 - In a separate terminal window (at the project root) run `yarn seed:export`
 
+### Deployment
+##### Deploying Cloud Functions
+- To deploy (and overwrite) all cloud functions: `yarn deploy:functions`
+
 ## Notable Architecture Patterns
 Note: To view mermaid diagrams in your IDE you can install the mermaid plugin
 
