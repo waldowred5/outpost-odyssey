@@ -70,7 +70,7 @@ flowchart TD
   classDef firestore fill:#FFCB2B,color:#000
   classDef googleGreen fill:#0F9D58
 
-  cloudTasks([cloud tasks]) --> |schedule new\ngame event| gameEventQueue[(Game Event\nQueue)]
+  cloudTasks([cloud tasks]) --> |schedule new\ngame event| gameEventQueue{Game Event\nQueue}
   gameEventQueue --> |run callback\nat scheduled\ntime| gameEventQueueCallback
   gameEventQueueCallback --> |update from\npending\nto ready| playerShips
   cloudFunctions([cloud functions]) --> purchaseShip
