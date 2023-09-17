@@ -64,35 +64,38 @@ Note: To view mermaid diagrams in your IDE you can install the mermaid plugin
 ### Tamper-proof Timestamps:
 ```mermaid
 flowchart TD
-classDef react fill:#61DBFB,color:#000
-classDef typescript fill:#3178C6
-classDef firebase fill:#F58200,color:#000
-classDef firestore fill:#FFCB2B,color:#000
-classDef googleGreen fill:#0F9D58
+  classDef react fill:#61DBFB,color:#000
+  classDef typescript fill:#3178C6
+  classDef firebase fill:#F58200,color:#000
+  classDef firestore fill:#FFCB2B,color:#000
+  classDef googleGreen fill:#0F9D58
 
-cloudTasks([cloud tasks]) --> |schedule new\ngame event| gameEventQueue[(Game Event\nQueue)]
-    gameEventQueue --> |update from\npending\nto ready| playerShips
-cloudFunctions([cloud functions]) --> purchaseShip
-    purchaseShip --> |add ship with\npending flag| playerShips
-    purchaseShip --> |request new\ncloud task| cloudTasks
-react([react]) --> gameEventQueueUI{gameEventQueueUI}
-    gameEventQueueUI --> firestoreSubscription
-firestore([firestore]) --> playerShips[(Player Ships)]
-    playerShips --> |filter for\npending entities| firestoreSubscription
-        firestoreSubscription --> gameEventPending{gameEventPending}
-            gameEventPending --> useRef
-                useRef --> |state changes\nread without\nre-rendering| subscription[Zustand\nSubscription]
-                    subscription --> |update every\nsecond\nno re-render| gameEventPending
-react --> marketplace{marketplace}
-    marketplace --> |player\npurchases\nship| purchaseShip
-react --> timer{Timer}
-    timer --> |establish server\nstart time| timerInterval
-    timerInterval --> |update\ncurrentServerTime\nevery second| useTimer[(useTimer)]
-        useTimer --> useRef
+  cloudTasks([cloud tasks]) --> |schedule new\ngame event| gameEventQueue[(Game Event\nQueue)]
+  gameEventQueue --> |run callback\nat scheduled\ntime| gameEventQueueCallback
+  gameEventQueueCallback --> |update from\npending\nto ready| playerShips
+  cloudFunctions([cloud functions]) --> purchaseShip
+  cloudFunctions --> gameEventQueueCallback[gameEventQueueCallback]
+  purchaseShip --> |add ship with\npending flag| playerShips
+  purchaseShip --> |request new\ncloud task| cloudTasks
+  react([react]) --> gameEventQueueUI{gameEventQueueUI}
+  gameEventQueueUI --> firestoreSubscription
+  firestore([firestore]) --> playerShips[(Player Ships)]
+  playerShips --> |filter for\npending entities| firestoreSubscription
+  firestoreSubscription --> gameEventPending{gameEventPending}
+  gameEventPending --> useRef
+  useRef --> |state changes\nread without\nre-rendering| subscription[Zustand\nSubscription]
+  subscription --> |update every\nsecond\nno re-render| gameEventPending
+  react --> marketplace{marketplace}
+  marketplace --> |player\npurchases\nship| purchaseShip
+  react --> timer{Timer}
+  timer --> |establish server\nstart time| timerInterval
+  timerInterval --> |update\ncurrentServerTime\nevery second| useTimer[(useTimer)]
+  useTimer --> useRef
 
-class react,gameEventQueueUI,marketplace,gameEventPending,gameEventComplete,timer react
-class useRef,subscription,firestoreSubscription,timerInterval,useTimer typescript
-class cloudFunctions,purchaseShip firebase
-class firestore,playerShips firestore
-class cloudTasks,gameEventQueue googleGreen
+
+  class react,gameEventQueueUI,playerShipsUI,marketplace,gameEventPending,gameEventComplete,timer react
+  class useRef,subscription,firestoreSubscription,timerInterval,useTimer typescript
+  class cloudFunctions,purchaseShip,gameEventQueueCallback firebase
+  class firestore,playerShips firestore
+  class cloudTasks,gameEventQueue googleGreen
 ```
