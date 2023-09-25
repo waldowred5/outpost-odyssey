@@ -5,7 +5,8 @@ import { db } from './db';
 import { FIRESTORE_COLLECTION } from '../../src/types/constants';
 import { Timestamp } from 'firebase-admin/firestore';
 import { addTaskToCloudTaskQueue } from './eventQueue';
-import { Ship, ShipBlueprint } from '../../src/types/models';
+import { Ship } from '../../src/types/models';
+import { SHIP_CLASS, SHIP_CLASS_MAP } from '../../src/types/shipTypes';
 
 export const purchaseShip = onCall(
   async (request) => {
@@ -17,38 +18,49 @@ export const purchaseShip = onCall(
     const { shipClass } = request.data;
     const { uid } = request.auth;
 
+    const noValidShipClasses =
+      Object.values(SHIP_CLASS).filter((s) => s === shipClass).length === 0;
+
+    if (noValidShipClasses) {
+      logger.log('Invalid ship class');
+
+      return;
+    }
+
     const userRef =
-    db.collection(FIRESTORE_COLLECTION.PLAYERS).doc(uid);
-    const shipRef =
-    db.collection(FIRESTORE_COLLECTION.SHIP_CLASSES).doc(shipClass);
+      db.collection(FIRESTORE_COLLECTION.PLAYERS).doc(uid);
 
     try {
       const userSnap = await userRef.get();
       const user = userSnap.data();
 
-      if (user === undefined) {
-        logger.log('User not found');
+      if (user === undefined || user === null) {
+        logger.log('User missing and is required to purchase ship');
 
         return;
       }
 
-      const shipSnap = await shipRef.get();
-      const shipData = shipSnap.data() as ShipBlueprint;
-
-      if (shipData.price > user.balance) {
-        logger.log('Insufficient funds');
-
-        return;
-      }
-
+      const shipClassData = SHIP_CLASS_MAP[shipClass];
+      const price = shipClassData.price;
       const purchasedAt = Timestamp.now();
       const availableAfter = new Timestamp(
         purchasedAt.seconds + 10,
         purchasedAt.nanoseconds
       );
 
+      if (price > user.balance) {
+        logger.log('Insufficient funds');
+
+        return;
+      }
+
       const ship: Ship = {
-        ...shipData,
+        price,
+        className: shipClass,
+        fuelCapacity: shipClassData.fuelCapacity,
+        fuelCurrent: 0,
+        hullCapacity: shipClassData.hullCapacity,
+        hullCurrent: shipClassData.hullCapacity,
         purchasedAt,
         availableAfter,
         isAvailable: false,

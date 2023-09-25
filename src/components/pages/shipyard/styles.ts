@@ -27,8 +27,8 @@ export const ShipyardSectionContainer = styled.div`
 export const TileContainer = styled.div`
   // Display
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(4, 140px);
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 100px);
   row-gap: 12px;
   column-gap: 12px;
   justify-content: center;

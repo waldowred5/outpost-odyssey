@@ -1,29 +1,26 @@
 import {
   MarketplaceSectionContainer,
-  StyledMarketplace, Tile, TileContainer
+  StyledMarketplace, Tile, TileContainer, TileImage, TileText
 } from './styles';
-import { useFirestore, useFirestoreCollectionData, useFirestoreDocData, useFunctions, useUser } from 'reactfire';
-import { collection, query, orderBy, doc } from 'firebase/firestore';
+import { useFirestore, useFirestoreDocData, useFunctions, useUser } from 'reactfire';
+import { doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { CLOUD_FUNCTION, FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
+import { CLOUD_FUNCTION, FIRESTORE_COLLECTION } from '../../../types/constants.ts';
 import { BsRocketTakeoff } from 'react-icons/bs';
+import { SHIP_CLASS, SHIP_CLASS_MAP } from '../../../types/shipTypes.ts';
 
 export const Marketplace = () => {
   const functions = useFunctions();
   const firestore = useFirestore();
   const purchaseShip = httpsCallable(functions, CLOUD_FUNCTION.PURCHASE_SHIP);
 
-  const handlePurchaseShip = async (shipClass: string) => {
+  const handlePurchaseShip = async (shipClass: keyof typeof SHIP_CLASS) => {
     await purchaseShip({ shipClass });
   };
 
   const { data: user } = useUser();
   const userRef = doc(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}`);
   const { data: userData } = useFirestoreDocData(userRef);
-
-  const shipClassesCollection = collection(firestore, FIRESTORE_COLLECTION.SHIP_CLASSES);
-  const shipClassesQuery = query(shipClassesCollection, orderBy('price', 'asc'));
-  const { status, data: shipClasses } = useFirestoreCollectionData(shipClassesQuery);
 
   return (
     <StyledMarketplace>
@@ -32,16 +29,24 @@ export const Marketplace = () => {
         <h3>SHIPS</h3>
         <TileContainer>
           {
-            status !== REACT_FIRE_HOOK_STATUS.LOADING && shipClasses.map((shipClass) => {
+            Object.values(SHIP_CLASS_MAP).map((shipClass) => {
               return (
                 <Tile
-                  key={shipClass.shipClass}
-                  onClick={() => handlePurchaseShip(shipClass.shipClass)}
+                  key={shipClass.className}
+                  onClick={() => handlePurchaseShip(shipClass.className)}
                   disabled={userData?.balance < shipClass.price}
                 >
-                  <BsRocketTakeoff style={{ fontSize: '32px' }}/>
-                  <p>{shipClass.shipClass}</p>
-                  <h3>$ {shipClass.price}</h3>
+                  <TileImage>
+                    <BsRocketTakeoff style={{ fontSize: '64px' }}/>
+                  </TileImage>
+                  <TileText>
+                    <h1>{shipClass.className}</h1>
+                    <h2>$ {shipClass.price}</h2>
+                  </TileText>
+                  <TileText>
+                    <h5>FUEL CAPACITY: {shipClass.fuelCapacity}t</h5>
+                    <h5>HULL CAPACITY: {shipClass.hullCapacity}t</h5>
+                  </TileText>
                 </Tile>
               );
             })

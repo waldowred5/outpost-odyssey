@@ -1,5 +1,5 @@
 import { BsRocketTakeoffFill } from 'react-icons/bs';
-import { Tile } from './styles.ts';
+import { Tile, TileImage, TileText } from './styles.ts';
 import { useEffect, useRef } from 'react';
 import useTimer from '../../../stores/useTimer.ts';
 import { Ship } from '../../../types/models.ts';
@@ -40,17 +40,23 @@ export const ShipTile = ({ shipData, shipId }: ShipTileProps) => {
         onClick={() => console.log(`ship ${shipId} selected`, shipData)}
         disabled={disabled}
       >
-        <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
-        <p>{shipData.shipClass}</p>
+        <TileImage>
+          <BsRocketTakeoffFill style={{ fontSize: '32px' }}/>
+        </TileImage>
         {
           disabled ?
-            <>
+            <TileText>
+              <p>{shipData.className}</p>
               <h3>AVAILABLE IN</h3>
               <h3
                 ref={shipTileHeadingRef}
               >-</h3>
-            </> :
-            <p>{shipId.substring(0, 4)}</p>
+            </TileText> :
+            <TileText>
+              <p>{shipData.className}</p>
+              <p>FUEL: {shipData.fuelCurrent / shipData.fuelCapacity * 100}%</p>
+              <p>HULL: {shipData.hullCurrent / shipData.hullCapacity * 100}%</p>
+            </TileText>
         }
       </Tile>
     </div>

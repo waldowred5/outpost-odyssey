@@ -41,8 +41,9 @@ export const TileContainer = styled.div`
 export const Tile = styled.button`
   // Display
   display: flex;
-  flex-direction: column;
-  flex: 1 1;
+  flex-direction: row;
+  column-gap: 24px;
+  //flex: 1 1;
   row-gap: 8px;
   height: 100%;
   width: 100%;
@@ -64,4 +65,22 @@ export const Tile = styled.button`
     color: grey;
     cursor: not-allowed;
   }
+`;
+
+export const TileImage = styled.div`
+  // Display
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  aspect-ratio: 1;
+`;
+
+export const TileText = styled.div`
+  // Display
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  padding: 22px;
+  align-items: center;
 `;
