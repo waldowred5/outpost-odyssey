@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore';
-import { SHIP_CLASS } from './shipTypes.ts';
+import { SHIP_CLASS } from './shipTypes';
 
 // EVENTS
 export type GameEvent = {
