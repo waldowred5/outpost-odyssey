@@ -139,7 +139,7 @@ export const TertiaryTab = styled.div`
   top: 0;
   right: 0;
   margin: 12px;
-  column-gap: 12px;
+  column-gap: 18px;
   z-index: 10;
 `;
 

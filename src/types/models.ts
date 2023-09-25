@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore';
+import { SHIP_CLASS } from './shipTypes.ts';
 
 // EVENTS
 export type GameEvent = {
@@ -18,10 +19,16 @@ export type Ship = {
   isAvailable: boolean,
   price: number,
   purchasedAt: Timestamp,
-  shipClass: string,
+  className: string,
+  fuelCapacity: number,
+  fuelCurrent: number,
+  hullCapacity: number,
+  hullCurrent: number,
 }
 
 export type ShipBlueprint = {
   price: number,
-  shipClass: string,
+  className: keyof typeof SHIP_CLASS,
+  fuelCapacity: number,
+  hullCapacity: number,
 }

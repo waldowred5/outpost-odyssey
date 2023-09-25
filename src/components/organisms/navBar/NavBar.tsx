@@ -204,7 +204,8 @@ export const NavBar = () => {
         </SecondaryTab>
       </StyledStatsBar>
       <TertiaryTab>
-        <TertiaryText>{currentUser && currentUser.email}</TertiaryText>
+        <p style={{ color: 'red' }}>WARNING! Outpost Odyssey is under active development, some data may be lost</p>
+        <TertiaryText>- {currentUser && currentUser.email} -</TertiaryText>
         {
           currentUser
             ? <TertiaryButton onClick={handleLogout}>
