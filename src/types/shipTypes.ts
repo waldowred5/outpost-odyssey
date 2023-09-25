@@ -1,4 +1,4 @@
-import { ShipBlueprint } from './models.ts';
+import { ShipBlueprint } from './models';
 
 export const SHIP_CLASS = {
   WASP: 'WASP',
