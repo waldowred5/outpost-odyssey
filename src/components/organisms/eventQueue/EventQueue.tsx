@@ -9,16 +9,23 @@ import { GameEvents } from '../../../types/models.ts';
 export const EventQueue = () => {
   const firestore = useFirestore();
   const { status: userStatus, data: user } = useUser();
+
   const playerShipsCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.SHIPS}`);
   const playerShipsQuery = query(playerShipsCollection, orderBy('price', 'asc'));
   const { status: shipStatus, data: shipData } = useFirestoreCollectionData(playerShipsQuery, {
     idField: 'id', // this field will be added to the object created from each document
   });
 
+  const playerCrewCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.CREW}`);
+  const playerCrewQuery = query(playerCrewCollection, orderBy('level', 'asc'));
+  const { status: crewStatus, data: crewData } = useFirestoreCollectionData(playerCrewQuery, {
+    idField: 'id', // this field will be added to the object created from each document
+  });
+
   const [gameEvents, setGameEvents] = useState<GameEvents>({});
 
   useEffect(() => {
-    if (shipStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS) {
+    if (shipStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS || crewStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS) {
       return;
     }
 
@@ -38,8 +45,31 @@ export const EventQueue = () => {
       };
     }, {});
 
+    // TODO: Add crew events
+    // const crewEvents = crewData.reduce((acc, crew) => {
+    //   if (crew.isAvailable) {
+    //     return acc;
+    //   }
+    //
+    //   return {
+    //     ...acc,
+    //     [`${crew.availableAfter.seconds}:${crew.id}`]: {
+    //       availableAfter: crew.availableAfter,
+    //       isAvailable: crew.isAvailable,
+    //       eventType: 'HIRE_CREW_MEMBER',
+    //       entityId: crew.id,
+    //     }
+    //   };
+    // }, {});
+
+    // const gameEventsData = {
+    //   ...Object.values(shipEvents),
+    //   ...Object.values(crewEvents),
+    // };
+
+    // setGameEvents(gameEventsData);
     setGameEvents(shipEvents);
-  }, [shipStatus, shipData, userStatus]);
+  }, [shipStatus, shipData, crewData, userStatus]);
 
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -56,7 +86,7 @@ export const EventQueue = () => {
         headingRef.current.textContent = `SERVER TIME: ${currentServerTime.seconds.toString().substring(5, 10)}`;
       }
 
-      // TODO: Remove this once drifting is fixed
+      // TODO: Move this to Leva once drifting is fixed
       if (headingRefTest.current) {
         const actualTime = Date.now() / 1000;
         headingRefTest.current.textContent = `ACTUAL TIME: ${actualTime.toString().substring(5, 10)}`;
@@ -77,7 +107,8 @@ export const EventQueue = () => {
             return (
               <EventQueueItem key={`EventQueue: ${index}`}>
                 <EventQueueItemText>
-                  {gameEvent[1].availableAfter.seconds.toString().substring(6, 10)} : {gameEvent[1].entityId.substring(0, 4)}
+                  <p>{gameEvent[1].eventType} : {gameEvent[1].entityId.substring(0, 4)}</p>
+                  {/*<p>{gameEvent[1].availableAfter.seconds.toString().substring(6, 10)} : {gameEvent[1].entityId.substring(0, 4)}</p>*/}
                 </EventQueueItemText>
               </EventQueueItem>
             );

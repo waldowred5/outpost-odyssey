@@ -11,6 +11,7 @@ import {
 import { AppRoutes } from './routes/Routes.tsx';
 import { GlobalStyles } from './globalStyles.ts';
 import { TimersAuthWrapper } from './controllers/TimersAuthWrapper.tsx';
+import { Leva } from 'leva';
 
 function App() {
   const app = useFirebaseApp();
@@ -19,7 +20,9 @@ function App() {
   const authInstance = getAuth(app);
   const functionsInstance = getFunctions(app);
 
-  if (window.location.hostname === 'localhost') {
+  const isLocalhost = window.location.hostname === 'localhost';
+
+  if (isLocalhost) {
     // Set up emulators
     connectStorageEmulator(storageInstance, '127.0.0.1', 9199);
     connectAuthEmulator(authInstance, 'http://127.0.0.1:9099', {
@@ -36,6 +39,13 @@ function App() {
           <GlobalStyles/>
           <AppRoutes/>
           <TimersAuthWrapper/>
+          {
+            isLocalhost
+              ? <Leva
+                collapsed={true}
+                hidden={false}/>
+              : null
+          }
         </FunctionsProvider>
       </AuthProvider>
     </FirestoreProvider>

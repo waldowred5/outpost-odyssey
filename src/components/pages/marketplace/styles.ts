@@ -21,6 +21,7 @@ export const MarketplaceSectionContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: scroll;
   
   // Spacing
   margin: 48px 0;
@@ -32,6 +33,20 @@ export const TileContainer = styled.div`
   display: flex;
   flex-direction: row;
   column-gap: 12px;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  width: 80vw;
+`;
+
+export const CrewTileContainer = styled.div`
+  // Display
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 100px;
+  flex-direction: row;
+  column-gap: 12px;
+  row-gap: 12px;
   justify-content: center;
   align-items: center;
   height: 140px;

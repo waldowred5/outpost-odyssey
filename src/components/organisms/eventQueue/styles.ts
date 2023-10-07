@@ -7,7 +7,7 @@ export const StyledEventQueue = styled.div`
   z-index: 1000;
   bottom: 8px;
   right: 8px;
-  width: 200px;
+  width: 300px;
   justify-content: flex-start;
   background-color: red;
 `;

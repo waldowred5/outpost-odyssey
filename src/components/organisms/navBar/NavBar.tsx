@@ -20,6 +20,8 @@ import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/con
 import { BsRocketTakeoffFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
 import { Auth, User } from '@firebase/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons';
 
 const NAV_BUTTON = {
   GALAXY: 'GALAXY',
@@ -104,6 +106,12 @@ export const NavBar = () => {
     idField: 'id', // this field will be added to the object created from each document
   });
 
+  const playerCrewCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${currentUser?.uid}/${FIRESTORE_COLLECTION.CREW}`);
+  const playerCrewQuery = query(playerCrewCollection);
+  const { status: crewStatus, data: crewData } = useFirestoreCollectionData(playerCrewQuery, {
+    idField: 'id', // this field will be added to the object created from each document
+  });
+
   const navButtonMap = {
     // [NAV_BUTTON.OUTPOST]: {
     //   icon: <GiOrbital style={{ fontSize: '22px' }}/>,
@@ -123,12 +131,12 @@ export const NavBar = () => {
       hasCount: true,
       count: shipStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? shipData.length : 0,
     },
-    // [NAV_BUTTON.CREW]: {
-    //   icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
-    //   route: PROTECTED_ROUTES.CREW,
-    //   hasCount: true,
-    //   count: 0,
-    // },
+    [NAV_BUTTON.CREW]: {
+      icon: <FontAwesomeIcon icon={faPeopleGroup}/>,
+      route: PROTECTED_ROUTES.CREW,
+      hasCount: true,
+      count: crewStatus === REACT_FIRE_HOOK_STATUS.SUCCESS ? crewData.length : 0,
+    },
     // [NAV_BUTTON.CONTRACTS]: {
     //   icon: <FontAwesomeIcon icon={faFileLines}/>,
     //   route: PROTECTED_ROUTES.CONTRACTS,

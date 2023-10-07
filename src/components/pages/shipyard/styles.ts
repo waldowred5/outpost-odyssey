@@ -27,14 +27,15 @@ export const ShipyardSectionContainer = styled.div`
 export const TileContainer = styled.div`
   // Display
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(6, 100px);
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 100px;
   row-gap: 12px;
   column-gap: 12px;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 80vw;
+  overflow: scroll;
 `;
 
 export const Tile = styled.button`

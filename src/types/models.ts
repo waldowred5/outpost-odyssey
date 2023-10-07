@@ -1,6 +1,30 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { SHIP_CLASS } from './shipTypes';
 
+// CREW
+export type CrewSkills = {
+  aerobatics: number,
+  charisma: number,
+  computing: number,
+  engineering: number,
+  leadership: number,
+  logistics: number,
+  navigation: number,
+  science: number,
+  weapons: number,
+}
+
+export type CrewMember = {
+  availableAfter: Timestamp | null,
+  isAvailable: boolean,
+  firstName: string,
+  lastName: string,
+  employedBy: string | null,
+  role: string,
+  level: number,
+  // skills: CrewSkills, // TODO: Add skills
+}
+
 // EVENTS
 export type GameEvent = {
   availableAfter: Timestamp,
