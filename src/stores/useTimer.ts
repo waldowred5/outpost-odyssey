@@ -24,45 +24,44 @@ interface TimerState {
 }
 
 export default create<TimerState>((set) => {
-    return {
-      currentServerTime: null,
-      serverTimeEstablished: null,
-      serverTimeOffsetSeconds: 0,
-      serverStartTime: null,
+  return {
+    currentServerTime: null,
+    serverTimeEstablished: null,
+    serverTimeOffsetSeconds: 0,
+    serverStartTime: null,
 
-      // Actions
-      initializeServerTimestampState: (
-        {
+    // Actions
+    initializeServerTimestampState: (
+      {
+        serverTimeEstablished,
+        serverTimeOffsetSeconds,
+        serverStartTime,
+      }: ServerTimestampState) => {
+      set(() => {
+        return {
           serverTimeEstablished,
           serverTimeOffsetSeconds,
           serverStartTime,
-        }: ServerTimestampState) => {
-        set(() => {
-          return {
-            serverTimeEstablished,
-            serverTimeOffsetSeconds,
-            serverStartTime,
-          };
-        });
-      },
+        };
+      });
+    },
 
-      resetServerTimestampState: () => {
-        set(() => {
-          return {
-            serverTimeEstablished: null,
-            serverTimeOffsetSeconds: 0,
-            serverStartTime: null,
-          };
-        });
-      },
+    resetServerTimestampState: () => {
+      set(() => {
+        return {
+          serverTimeEstablished: null,
+          serverTimeOffsetSeconds: 0,
+          serverStartTime: null,
+        };
+      });
+    },
 
-      updateCurrentServerTime: (currentServerTime: Timestamp) => {
-        set(() => {
-          return {
-            currentServerTime,
-          };
-        });
-      }
-    };
-  }
-);
+    updateCurrentServerTime: (currentServerTime: Timestamp) => {
+      set(() => {
+        return {
+          currentServerTime,
+        };
+      });
+    }
+  };
+});

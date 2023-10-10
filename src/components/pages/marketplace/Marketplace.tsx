@@ -32,7 +32,7 @@ export const Marketplace = () => {
     const { data: userData } = useFirestoreDocData(userRef);
 
     const playerCrewCollection = collection(firestore, `${FIRESTORE_COLLECTION.TALENT_POOL}`);
-    const playerCrewQuery = query(playerCrewCollection, where('employedBy', '==', null), orderBy('level', 'asc'));
+    const playerCrewQuery = query(playerCrewCollection, where('employedBy', '==', null), orderBy('level', 'desc'));
     const { status: crewStatus, data: crewData } = useFirestoreCollectionData(playerCrewQuery, {
       idField: 'id', // this field will be added to the object created from each document
     });

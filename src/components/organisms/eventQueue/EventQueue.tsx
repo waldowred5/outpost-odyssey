@@ -2,9 +2,9 @@ import { StyledEventQueue, EventQueueItem, EventQueueItemContainer, EventQueueIt
 import { useEffect, useRef, useState } from 'react';
 import useTimer from '../../../stores/useTimer.ts';
 import { useFirestore, useFirestoreCollectionData, useUser } from 'reactfire';
-import { collection, orderBy, query } from 'firebase/firestore';
+import { collection, orderBy, query, where } from 'firebase/firestore';
 import { FIRESTORE_COLLECTION, REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
-import { GameEvents } from '../../../types/models.ts';
+import { GameEvent } from '../../../types/models.ts';
 
 export const EventQueue = () => {
   const firestore = useFirestore();
@@ -16,60 +16,60 @@ export const EventQueue = () => {
     idField: 'id', // this field will be added to the object created from each document
   });
 
-  const playerCrewCollection = collection(firestore, `${FIRESTORE_COLLECTION.PLAYERS}/${user?.uid}/${FIRESTORE_COLLECTION.CREW}`);
-  const playerCrewQuery = query(playerCrewCollection, orderBy('level', 'asc'));
+  const playerCrewCollection = collection(firestore, FIRESTORE_COLLECTION.TALENT_POOL);
+  const playerCrewQuery = query(playerCrewCollection, where('employedBy', '==', user?.uid), orderBy('level', 'asc'));
   const { status: crewStatus, data: crewData } = useFirestoreCollectionData(playerCrewQuery, {
     idField: 'id', // this field will be added to the object created from each document
   });
 
-  const [gameEvents, setGameEvents] = useState<GameEvents>({});
+  // const [gameEvents, setGameEvents] = useState<GameEvents>({});
+  const [gameEvents, setGameEvents] = useState<GameEvent[]>([]);
 
   useEffect(() => {
     if (shipStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS || crewStatus !== REACT_FIRE_HOOK_STATUS.SUCCESS) {
       return;
     }
 
-    const shipEvents = shipData.reduce((acc, ship) => {
+    const shipEvents = shipData.reduce((acc: GameEvent[], ship) => {
       if (ship.isAvailable) {
         return acc;
       }
 
-      return {
+      return [
         ...acc,
-        [`${ship.availableAfter.seconds}:${ship.id}`]: {
+        {
           availableAfter: ship.availableAfter,
           isAvailable: ship.isAvailable,
           eventType: 'PURCHASE_SHIP',
           entityId: ship.id,
         }
-      };
-    }, {});
+      ];
+    }, []);
 
-    // TODO: Add crew events
-    // const crewEvents = crewData.reduce((acc, crew) => {
-    //   if (crew.isAvailable) {
-    //     return acc;
-    //   }
-    //
-    //   return {
-    //     ...acc,
-    //     [`${crew.availableAfter.seconds}:${crew.id}`]: {
-    //       availableAfter: crew.availableAfter,
-    //       isAvailable: crew.isAvailable,
-    //       eventType: 'HIRE_CREW_MEMBER',
-    //       entityId: crew.id,
-    //     }
-    //   };
-    // }, {});
+    const crewEvents = crewData.reduce((acc: GameEvent[], crew) => {
+      if (crew.isAvailable) {
+        return acc;
+      }
 
-    // const gameEventsData = {
-    //   ...Object.values(shipEvents),
-    //   ...Object.values(crewEvents),
-    // };
+      return [
+        ...acc,
+        {
+          availableAfter: crew.availableAfter,
+          isAvailable: crew.isAvailable,
+          eventType: 'HIRE_CREW_MEMBER',
+          entityId: crew.id,
+        }
+      ];
+    }, []);
 
-    // setGameEvents(gameEventsData);
-    setGameEvents(shipEvents);
-  }, [shipStatus, shipData, crewData, userStatus]);
+    const gameEventsData = [
+      ...shipEvents,
+      ...crewEvents,
+    ];
+
+    gameEventsData.sort((a, b) => a.availableAfter.seconds - b.availableAfter.seconds);
+    setGameEvents(gameEventsData);
+  }, [shipStatus, shipData, crewStatus, crewData, userStatus]);
 
   const serverTimeRef = useRef(useTimer.getState().currentServerTime);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -103,12 +103,11 @@ export const EventQueue = () => {
     <StyledEventQueue>
       <EventQueueItemContainer>
         {
-          Object.entries(gameEvents).map((gameEvent, index) => {
+          gameEvents.map((gameEvent: GameEvent, index) => {
             return (
               <EventQueueItem key={`EventQueue: ${index}`}>
                 <EventQueueItemText>
-                  <p>{gameEvent[1].eventType} : {gameEvent[1].entityId.substring(0, 4)}</p>
-                  {/*<p>{gameEvent[1].availableAfter.seconds.toString().substring(6, 10)} : {gameEvent[1].entityId.substring(0, 4)}</p>*/}
+                  <p>{gameEvent.eventType} : {gameEvent.entityId.substring(0, 4)}</p>
                 </EventQueueItemText>
               </EventQueueItem>
             );
