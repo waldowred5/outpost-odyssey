@@ -6,20 +6,46 @@ export const HeroContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  row-gap: 32px;
   
   // Sizing
   width: 100vw;
   height: 100vh;
 `;
 
+export const HeadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const HeroHeading = styled.h1`
   // Font
   font-size: 96px;
+  font-family: 'Russo One', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  letter-spacing: 6px;
+  color: cyan;
+  text-shadow: 
+    -2px -2px 0 black,
+    2px -2px 0 black,
+    -2px 2px 0 black,
+    2px 2px 0 black,
+    7px -5px deeppink;
+  `;
+
+export const HeroHeadingDivider = styled.div`
+  display: flex;
+  width: 502px;
+  background-color: yellow;
+  height: 4px;
+  margin-bottom: 8px;
 `;
 
 export const HeroSubHeading = styled.p`
   // Font
   font-size: 32px;
+  max-width: 600px;
+  text-align: center;
+  color: yellow;
 `;
 
 export const HeroButton = styled.button`

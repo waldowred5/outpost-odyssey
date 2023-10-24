@@ -10,7 +10,7 @@ import {
   HeroHeading,
   HeroSubHeading,
   HeroButton,
-  LoginButtonWrapper,
+  LoginButtonWrapper, HeroHeadingDivider, HeadingContainer,
 } from './styles';
 import { useSigninCheck } from 'reactfire';
 import { REACT_FIRE_HOOK_STATUS } from '../../../types/constants.ts';
@@ -36,15 +36,21 @@ export const Home = () => {
       <LoginButtonWrapper>
         {
           !signInCheckResult?.signedIn
-          ? <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING} onClick={onLoginButtonClick}>LOGIN</HeroButton>
-          : <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING} onClick={onResumeButtonClick}>CONTINUE</HeroButton>
+            ? <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING}
+                          onClick={onLoginButtonClick}>LOGIN</HeroButton>
+            : <HeroButton disabled={status === REACT_FIRE_HOOK_STATUS.LOADING}
+                          onClick={onResumeButtonClick}>CONTINUE</HeroButton>
         }
       </LoginButtonWrapper>
       <HeroContainer>
-        <HeroHeading>OUTPOST ODYSSEY</HeroHeading>
+        <HeadingContainer>
+          <HeroHeading>OUTPOST</HeroHeading>
+          <HeroHeadingDivider/>
+          <HeroHeading>ODYSSEY</HeroHeading>
+        </HeadingContainer>
         <HeroSubHeading>Build and manage your very own outpost in space, for profit and glory</HeroSubHeading>
         <HeroButton onClick={onRegistrationButtonClick}>
-          PLAY NOW FOR FREE*
+          PLAY NOW FOR FREE
         </HeroButton>
       </HeroContainer>
       <Divider/>
@@ -89,7 +95,7 @@ export const Home = () => {
       </FeatureTile>
       <Divider/>
       <HeroButton onClick={onRegistrationButtonClick}>
-        PLAY NOW FOR FREE*
+        PLAY NOW FOR FREE
       </HeroButton>
     </>
   );
