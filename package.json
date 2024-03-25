@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "serve": "firebase emulators:start --import=./.seedLocal --export-on-exit",
-    "serve:queue": "docker-compose up",
+    "serve:queue": "docker compose up",
     "serve:reseed": "firebase emulators:start --import=./.seed --export-on-exit=./.seedLocal",
     "seed:export": "firebase emulators:export ./.seed",
     "deploy:functions": "firebase deploy --only functions",

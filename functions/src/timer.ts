@@ -4,6 +4,7 @@ import { https } from 'firebase-functions';
 import { Timestamp } from 'firebase/firestore';
 
 export const getServerTime = onCall(
+  { cors: true },
   async (request) => {
     if (request.auth === undefined) {
       logger.log('Unauthenticated request');

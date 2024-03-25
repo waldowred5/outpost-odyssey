@@ -9,6 +9,7 @@ import { Ship } from '../../src/types/models';
 import { SHIP_CLASS, SHIP_CLASS_MAP } from '../../src/types/shipTypes';
 
 export const purchaseShip = onCall(
+  { cors: true },
   async (request) => {
     if (request.auth === undefined) {
       logger.log('Unauthenticated request');
